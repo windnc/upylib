@@ -96,6 +96,7 @@ def db_insert_query_many(db, sql, data_list, verbosity=1):
 
     return True
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def db_select_query(db, sql, verbosity=1):
     try:
