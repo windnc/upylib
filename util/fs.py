@@ -1,15 +1,26 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-⏎
+
 from __future__ import print_function
 import sys
 import os
 import shutil
+import shutil
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if sys.version_info<(3,0,0):
     reload(sys)
     sys.setdefaultencoding('utf8')
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_movie( fn ):
+    if not fn: return False
+    ext = os.path.splitext( fn )[1].lower()
+    if ext == ".mp4": return True
+    elif ext == ".avi": return True
+    elif ext == ".mkv": return True
+
+    return False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def check_filter( filter_dict, path ):
@@ -43,6 +54,28 @@ def get_dir_list( root ):
     return dn_list
 
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+def del_empty_dir( dn, verbose=False ):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+    try:
+        if verbose: print( "delete %s" % (dn) )
+        os.rmdir( dn )
+    except:
+        if verbose: print( "delete error! %s" % (dn) )
+        return False
+    return True
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+def del_file( fn, verbose=False ):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+    try:
+        if verbose: print( "delete %s" % (fn) )
+        os.remove( fn )
+    except:
+        if verbose: print( "delete error! %s" % (fn) )
+        return False
+    return True
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def move_file( src, tgt, verbose ):
     try:
@@ -55,6 +88,21 @@ def move_file( src, tgt, verbose ):
     return True
 
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+def assert_dir( dn, verbose ):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+    if not os.path.exists( dn ):
+        if verbose: print( "mkdir %s" % (dn) )
+        os.makedirs(dn)
+
+    """
+    try:
+        os.makedirs(directory)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    """
+    return os.path.exists( dn )
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def txtfile2dict( fn ):
     d = dict()
