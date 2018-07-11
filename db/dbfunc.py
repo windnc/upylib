@@ -74,12 +74,13 @@ def db_insert_query(db, sql, data, verbosity=1):
         cur = db.cursor()
         cur.execute(sql, data)
         db.commit()
+        i = cur.lastrowid
 
     except Exception as e:
         print("db_insert_query exception: %s" % e)
         return False
 
-    return True
+    return i
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
@@ -88,13 +89,14 @@ def db_insert_query_many(db, sql, data_list, verbosity=1):
         cur = db.cursor()
         cur.executemany(sql, data_list)
         db.commit()
+        i = cur.lastrowid
 
     except Exception as e:
         if verbosity >= 1:
            print("db_insert_query_many exception: %s" % e)
         return False
 
-    return True
+    return i
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
@@ -132,6 +134,7 @@ def db_update_query(db, sql, verbosity=1):
     try:
         cur = db.cursor()
         cur.execute(sql)
+        db.commit()
 
     except Exception as e:
         if verbosity >= 1:
