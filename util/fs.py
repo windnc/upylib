@@ -5,7 +5,6 @@ from __future__ import print_function
 import sys
 import os
 import shutil
-import shutil
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if sys.version_info<(3,0,0):
@@ -35,23 +34,75 @@ def check_filter( filter_dict, path ):
     return True
 
 
+class FileInfo:
+    full_fn = None
+    fn = None
+    path = None
+    base = None
+    ext = None
+    cstamp = -1
+    mstamp = -1
+    size = -1
+
+    def __init__(self, path, fn):
+        full_fn = os.path.join(path, fn)
+        if not os.path.isfile(full_fn):
+            return
+
+        self.full_fn = full_fn
+        self.fn = fn
+        self.path = path
+        b,e = os.path.splitext(fn)
+        if e.startswith("."):
+            e = e[1:]
+        self.base = b
+        self.ext = e
+        self.cstamp = int(os.path.getctime(full_fn))
+        self.mstamp = int(os.path.getmtime(full_fn))
+        self.size = os.path.getsize()
+        st = os.stat(full_fn)
+
+        return
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_file_list( root, filter_dict=None ):
-    fn_list = list()
-    for dn, dns, fns in os.walk( root ):
-        for fn2 in fns:
-            if check_filter( filter_dict, fn2 ):
-                fn_list.append( (os.path.join( dn, fn2 ),fn2) )
-    return fn_list
+def get_parent( root ):
+    return os.path.abspath(os.path.join(root, os.pardir))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_dir_list( root ):
-    dn_list = list()
-    for dn, dns, fns in os.walk( root ):
-        for dn2 in dns:
-            dn_list.append( (os.path.join( dn, dn2 ), dn2) )
-    return dn_list
+def get_file_list( root, filter_dict=None, recursive=False):
+    if recursive is False:
+        tmplist = list()
+        for fn in os.listdir(root):
+            full_fn = os.path.join(root, fn)
+            if os.path.isfile(full_fn):
+                tmplist.append(FileInfo(root, fn))
+        return tmplist
+
+    else:
+        fn_list = list()
+        for dn, dns, fns in os.walk( root ):
+            for fn2 in fns:
+                if check_filter( filter_dict, fn2 ):
+                    fn_list.append( (os.path.join( dn, fn2 ),fn2) )
+        return fn_list
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def get_dir_list( root, recursive=False ):
+    if recursive is False:
+        tmplist = list()
+        for tmp in os.listdir(root):
+            if os.path.isdir(os.path.join(root, tmp)):
+                tmplist.append(tmp)
+        return tmplist
+
+    else:
+        dn_list = list()
+        for dn, dns, fns in os.walk( root ):
+            for dn2 in dns:
+                dn_list.append( (os.path.join( dn, dn2 ), dn2) )
+        return dn_list
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
