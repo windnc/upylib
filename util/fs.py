@@ -4,7 +4,9 @@
 from __future__ import print_function
 import sys
 import os
+import time
 import shutil
+import datetime
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if sys.version_info<(3,0,0):
@@ -40,8 +42,12 @@ class FileInfo:
     path = None
     base = None
     ext = None
+    filetype = None
+    icon = None
     cstamp = -1
     mstamp = -1
+    cstr = None
+    mstr = None
     size = -1
 
     def __init__(self, path, fn):
@@ -59,6 +65,8 @@ class FileInfo:
         self.ext = e
         self.cstamp = int(os.path.getctime(full_fn))
         self.mstamp = int(os.path.getmtime(full_fn))
+        self.cstr = datetime.datetime.fromtimestamp( self.cstamp ).strftime("%y.%m.%d %H:%M:%S")
+        self.mstr = datetime.datetime.fromtimestamp( self.mstamp ).strftime("%y.%m.%d %H:%M:%S")
         self.size = os.path.getsize(full_fn)
         st = os.stat(full_fn)
 
