@@ -59,7 +59,7 @@ class FileInfo:
         self.ext = e
         self.cstamp = int(os.path.getctime(full_fn))
         self.mstamp = int(os.path.getmtime(full_fn))
-        self.size = os.path.getsize()
+        self.size = os.path.getsize(full_fn)
         st = os.stat(full_fn)
 
         return
