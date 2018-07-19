@@ -68,12 +68,15 @@ class FileInfo:
         self.cstr = datetime.datetime.fromtimestamp( self.cstamp ).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp( self.mstamp ).strftime("%y.%m.%d %H:%M:%S")
         self.size = os.path.getsize(full_fn)
+        self.sizestr = "{:,}".format(self.size)
         st = os.stat(full_fn)
 
         return
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def get_parent( root ):
+    if root == "/":
+        return None
     return os.path.abspath(os.path.join(root, os.pardir))
 
 
@@ -96,13 +99,46 @@ def get_file_list( root, filter_dict=None, recursive=False):
         return fn_list
 
 
+class DirInfo:
+    full_fn = None
+    fn = None
+    path = None
+    base = None
+    ext = None
+    filetype = None
+    icon = None
+    cstamp = -1
+    mstamp = -1
+    cstr = None
+    mstr = None
+    size = -1
+
+    def __init__(self, path, dn):
+        full_dn = os.path.join(path, dn)
+        if not os.path.isdir(full_dn):
+            return
+
+        self.full_dn = full_dn
+        self.dn = dn
+        self.path = path
+        self.cstamp = int(os.path.getctime(full_dn))
+        self.mstamp = int(os.path.getmtime(full_dn))
+        self.cstr = datetime.datetime.fromtimestamp( self.cstamp ).strftime("%y.%m.%d %H:%M:%S")
+        self.mstr = datetime.datetime.fromtimestamp( self.mstamp ).strftime("%y.%m.%d %H:%M:%S")
+        #self.size = os.path.getsize(full_fn)
+        self.size = 0
+
+        return
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_dir_list( root, recursive=False ):
+def get_dir_list(root, recursive=False):
     if recursive is False:
         tmplist = list()
         for tmp in os.listdir(root):
-            if os.path.isdir(os.path.join(root, tmp)):
-                tmplist.append(tmp)
+            dn = os.path.join(root, tmp)
+            if os.path.isdir(dn):
+                tmplist.append(DirInfo(root, tmp))
         return tmplist
 
     else:
