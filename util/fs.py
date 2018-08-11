@@ -184,10 +184,12 @@ def move_file( src, tgt, verbose ):
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def assert_dir( dn, verbose ):
+def assert_dir( dn, verbose=1 ):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
     if not os.path.exists( dn ):
-        if verbose: print( "mkdir %s" % (dn) )
+        if verbose>=1:
+            print( "mkdir %s" % (dn) )
+
         os.makedirs(dn)
 
     """
@@ -198,6 +200,8 @@ def assert_dir( dn, verbose ):
             raise
     """
     return os.path.exists( dn )
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def txtfile2dict( fn ):
     d = dict()
