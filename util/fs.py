@@ -161,23 +161,39 @@ def del_empty_dir( dn, verbose=False ):
     return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def del_file( fn, verbose=False ):
+def del_file( fn, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+    if verbose >= 1:
+        print( "del_file %s" % (fn) )
+
     try:
-        if verbose: print( "delete %s" % (fn) )
         os.remove( fn )
-    except:
-        if verbose: print( "delete error! %s" % (fn) )
+    except Exception as e:
+        print( "delete error! %s" % (fn) )
+        print( e )
         return False
     return True
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+def assert_no_file(fn, verbose=1):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+    if verbose >= 1:
+        print( "assert no file %s" % (fn) )
+
+    if os.path.isfile(fn):
+        print(verbose)
+        return del_file(fn, verbose=verbose)
+    return True
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def move_file( src, tgt, verbose ):
+def move_file( src, tgt, verbose=1 ):
     try:
-        if verbose: print( "move %s -> %s" % (src,tgt) )
+        if verbose >= 1:
+            print( "move %s -> %s" % (src,tgt) )
         shutil.move( src, tgt )
-    except:
+    except Exception as e:
         print( "error!" )
+        print( e )
         return False
 
     return True
