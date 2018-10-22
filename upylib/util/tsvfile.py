@@ -4,9 +4,14 @@
 from __future__ import print_function
 import os
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+if sys.version_info<(3,0,0):
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 class TSVFile:
     f=None
     field_list=list()
