@@ -1,4 +1,6 @@
 ### upylib
 
 1. install
-  -	export PYTHONPATH=$PYTHONPATH:pwd
+  -	```sudo pip install --target=/usr/lib/python3/dist-packages/upylib .```
+
+
