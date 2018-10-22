@@ -5,6 +5,7 @@ from __future__ import print_function
 import sys
 import os
 import time
+import hashlib
 import shutil
 import datetime
 
@@ -81,8 +82,13 @@ def get_parent(root):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_file_list(root, filter_dict=None, recursive=False):
+def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
+    if verbose >= 3:
+        print("get_file_list: %s" % root)
+
     if not os.path.isdir(root):
+        if verbose >= 1:
+            print("is not dir: %s" % root)
         return False
 
     if recursive is False:
@@ -132,6 +138,17 @@ class DirInfo:
 
         return
 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_file(path):
+    if os.path.isfile(path):
+        return True
+    else:
+        # broken symlink
+        if os.path.islink(path):
+            return True
+        else:
+            return False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def get_dir_list(root, recursive=False):
@@ -203,37 +220,45 @@ def del_empty_dir(root, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
 def del_file(fn, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 1:
+    if verbose >= 4:
         print("del_file %s" % (fn))
 
     try:
         os.remove(fn)
     except Exception as e:
-        print("delete error! %s" % (fn))
-        print(e)
+        if verbose >= 1:
+            print("delete error! %s" % (fn))
+            print(e)
         return False
     return True
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
 def assert_no_file(fn, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 1:
+    if verbose >= 2:
         print("assert no file %s" % (fn))
 
-    if os.path.isfile(fn):
-        print(verbose)
-        return del_file(fn, verbose=verbose)
+    if is_file(fn):
+        if verbose >= 2:
+            print("asser no file:del")
+        if not del_file(fn, verbose=verbose):
+            return False
+
     return True
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def move_file(src, tgt, verbose=1):
+    if verbose >= 2:
+        print("move_file %s -> %s" % (src,tgt))
+
     try:
-        if verbose >= 1:
-            print("move %s -> %s" % (src,tgt))
         shutil.move(src, tgt)
     except Exception as e:
-        print("error!")
-        print(e)
+        if verbose >= 1:
+            print("move_file error")
+            print(e)
         return False
 
     return True
@@ -242,19 +267,19 @@ def move_file(src, tgt, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
 def assert_dir(dn, verbose=1):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if not os.path.exists(dn):
-        if verbose>=1:
-            print("mkdir %s" % (dn))
+    if verbose>=2:
+        print("assert_dir : %s" % (dn))
 
-        os.makedirs(dn)
+    if os.path.exists(dn):
+        if verbose>=2:
+            print("already exists: %s" % (dn))
+        return True
 
-    """
-    try:
-        os.makedirs(directory)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    """
+
+    if verbose>=2:
+        print("try to make dirs: %s" % (dn))
+    os.makedirs(dn)
+
     return os.path.exists(dn)
 
 
@@ -278,6 +303,17 @@ def tsvfile2dict(fn, keyid, valueid):
             d[ arr[keyid] ] = arr[valueid]
     return d
 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def get_md5(fname):
+    if not os.path.exists(fname):
+        return None
+
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def test():
