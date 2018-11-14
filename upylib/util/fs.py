@@ -37,7 +37,9 @@ def check_filter(filter_dict, path):
     return True
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 class FileInfo:
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     full_fn = None
     fn = None
     path = None
@@ -45,11 +47,11 @@ class FileInfo:
     ext = None
     filetype = None
     icon = None
-    cstamp = -1
-    mstamp = -1
+    cstamp = None
+    mstamp = None
     cstr = None
     mstr = None
-    size = -1
+    size = None
 
     def __init__(self, path, fn):
         full_fn = os.path.join(path, fn)
@@ -107,19 +109,20 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
         return fn_list
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 class DirInfo:
-    full_fn = None
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     fn = None
     path = None
     base = None
     ext = None
     filetype = None
     icon = None
-    cstamp = -1
-    mstamp = -1
+    cstamp = None
+    mstamp = None
     cstr = None
     mstr = None
-    size = -1
+    size = None
 
     def __init__(self, path, dn):
         full_dn = os.path.join(path, dn)
@@ -133,8 +136,6 @@ class DirInfo:
         self.mstamp = int(os.path.getmtime(full_dn))
         self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
-        #self.size = os.path.getsize(full_fn)
-        self.size = 0
 
         return
 
