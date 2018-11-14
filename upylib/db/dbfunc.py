@@ -29,33 +29,34 @@ def db_recreate(db_fn, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_get_table_names(db):
+def db_get_table_names(db_fn, verbosity=1):
     sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
     print(sql)
-    res = db_select_query(db, sql)
+    res = db_select_query(db_fn, sql)
     tmplist = list()
     for row in res:
         tmplist.append(row[0])
     return tmplist
 
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_create_table(db, sql, verbosity=1):
+def db_create_table(db_fn, sql, verbosity=1):
+    db = db_connect(db_fn)
     try:
         cur = db.cursor()
         cur.execute(sql)
-
     except Exception as e:
         if verbosity >= 1:
             print("db_create_table exception: %s" % e)
         return False
-
     return True
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_drop_table(db, tbl_name, verbosity=1):
+def db_drop_table(db_fn, tbl_name, verbosity=1):
     try:
+        db = db_connect(db_fn)
         sql="DROP TABLE IF EXISTS %s" % tbl_name
         cur = db.cursor()
         cur.execute(sql)
@@ -69,8 +70,9 @@ def db_drop_table(db, tbl_name, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_insert_query(db, sql, data, verbosity=1):
+def db_insert_query(db_fn, sql, data, verbosity=1):
     try:
+        db = db_connect(db_fn)
         cur = db.cursor()
         cur.execute(sql, data)
         db.commit()
@@ -84,8 +86,9 @@ def db_insert_query(db, sql, data, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_insert_query_many(db, sql, data_list, verbosity=1):
+def db_insert_query_many(db_fn, sql, data_list, verbosity=1):
     try:
+        db = db_connect(db_fn)
         cur = db.cursor()
         cur.executemany(sql, data_list)
         db.commit()
@@ -100,8 +103,9 @@ def db_insert_query_many(db, sql, data_list, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_select_query(db, sql, verbosity=1):
+def db_select_query(db_fn, sql, verbosity=1):
     try:
+        db = db_connect(db_fn)
         cur = db.cursor()
         cur.execute(sql)
         rows = cur.fetchall()
@@ -115,8 +119,9 @@ def db_select_query(db, sql, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_delete_query(db, sql, verbosity=1):
+def db_delete_query(db_fn, sql, verbosity=1):
     try:
+        db = db_connect(db_fn)
         cur = db.cursor()
         cur.execute(sql)
         db.commit()
@@ -130,8 +135,9 @@ def db_delete_query(db, sql, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_update_query(db, sql, verbosity=1):
+def db_update_query(db_fn, sql, verbosity=1):
     try:
+        db = db_connect(db_fn)
         cur = db.cursor()
         cur.execute(sql)
         db.commit()
@@ -145,14 +151,14 @@ def db_update_query(db, sql, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_is_table(db, tbl_name, verbosity=1):
+def db_is_table(db_fn, tbl_name, verbosity=1):
+    db = db_connect(db_fn)
     sql = """
         SELECT name FROM sqlite_master WHERE type='table' and name='%s'
     """ % tbl_name
     res = db_select_query(db, sql, verbosity)
     if len(res) == 0:
         return False
-
     return True
 
 
