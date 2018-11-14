@@ -1,8 +1,7 @@
 from __future__ import print_function
 
 import sys
-#from upylib.db.dbfunc import *
-from dbfunc import *
+from upylib.db.dbfunc import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if sys.version_info < (3, 0, 0):
