@@ -317,6 +317,20 @@ def get_md5(fname):
     return hash_md5.hexdigest()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def get_filesize_str(s):
+    if s> 1024 * 1024 * 1024 * 1024: 
+        return "%1.2f TB" % (float(s)/1024/1024/1024/1024)
+    elif s > 1024 * 1024 * 1024: 
+        return "%1.2f GB" % (float(s)/1024/1024/1024)
+    elif s > 1024 * 1024: 
+        return "%1.2f MB" % (float(s)/1024/1024)
+    elif s > 1024:
+        return "%1.2f KB" % (float(s)/1024)
+    else:
+        return "%d B" % (s)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def test():
     if len(sys.argv) != 3:
         print("usage: %s fn-in fn-out" % sys.argv[0])
