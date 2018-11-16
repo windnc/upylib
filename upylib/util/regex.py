@@ -13,14 +13,13 @@ if sys.version_info<(3,0,0):
 def regex_replace(s, patt, rep):
     res = re.search(patt, s)
     if res is None:
-        return s
+        return False
 
     s = rep
     for i in range(1,9):
         var = "${%d}" % i
-        if var not in s:
-            break
-        s = s.replace( "${%d}" % i, res.group(i) )
+        if var in s:
+            s = s.replace( var, res.group(i) )
 
     return s
 
