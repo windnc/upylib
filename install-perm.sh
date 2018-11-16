@@ -1,2 +1,2 @@
-sudo pip3 install upylib
+sudo pip3 install upylib --upgrade
 
