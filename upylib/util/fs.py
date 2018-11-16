@@ -191,7 +191,7 @@ def get_dir_list(root, filter_dict=None, recursive=False):
             full_dn = os.path.join(root, dn)
             if os.path.isdir(full_dn):
                 full_dn_list.append(full_dn)
-    print(full_dn_list)
+
     di_list = list()
     for full_dn in full_dn_list:
         dinfo = DirInfo(full_dn=full_dn)
