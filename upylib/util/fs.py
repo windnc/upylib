@@ -102,14 +102,13 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
             print("root is not dir: %s" % root)
         return False
 
+    full_fn_list = list()
     if recursive is True:
-        full_fn_list = list()
         for dn, dns, fns in os.walk(root):
             for fn2 in fns:
                 full_fn = os.path.join(dn, fn2)
                 full_fn_list.append(full_fn)
     else:
-        full_fn_list = list()
         for fn in os.listdir(root):
             full_fn = os.path.join(root, fn)
             if os.path.isfile(full_fn):
@@ -175,25 +174,31 @@ def is_file(path):
         else:
             return False
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_dir_list(root, recursive=False):
+def get_dir_list(root, filter_dict=None, recursive=False):
     if not os.path.isdir(root):
         return False
 
-    if recursive is False:
-        tmplist = list()
-        for tmp in os.listdir(root):
-            dn = os.path.join(root, tmp)
-            if os.path.isdir(dn):
-                tmplist.append(DirInfo(root, tmp))
-        return tmplist
-
-    else:
-        dn_list = list()
+    full_dn_list = list()
+    if recursive is True:
         for dn, dns, fns in os.walk(root):
             for dn2 in dns:
-                dn_list.append((os.path.join(dn, dn2), dn2))
-        return dn_list
+                full_dn = os.path.join(dn, dn2)
+                full_dn_list.append(full_dn)
+    else:
+        for dn in os.listdir(root):
+            full_dn = os.path.join(root, dn)
+            if os.path.isdir(full_dn):
+                full_dn_list.append(full_dn)
+    print(full_dn_list)
+    di_list = list()
+    for full_dn in full_dn_list:
+        dinfo = DirInfo(full_dn=full_dn)
+        if check_filter(dinfo, filter_dict):
+            di_list.append( dinfo )
+
+    return di_list
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
