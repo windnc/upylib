@@ -4,6 +4,7 @@
 from __future__ import print_function
 import sys
 import os
+import json
 import time
 import hashlib
 import shutil
@@ -25,14 +26,13 @@ def is_movie(fn):
     return False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def check_filter(filter_dict, path):
-    if not filter_dict: return True
-    for k, v in filter_dict.items():
-        if k == "ext":
-            return True
-        elif k == "contain":
-            for patt in v:
-                if path.find(patt) < 0: return False
+def check_filter(finfo, filter_dict):
+    if not filter_dict:
+        return True
+
+    if "ext" in filter_dict:
+        if finfo.ext.lower() != filter_dict["ext"].lower():
+            return False
 
     return True
 
@@ -53,15 +53,21 @@ class FileInfo:
     mstr = None
     size = None
 
-    def __init__(self, path, fn):
-        full_fn = os.path.join(path, fn)
-        if not os.path.isfile(full_fn):
+    def __init__(self, full_fn=None, path=None, fn=None):
+        if full_fn:
+            self.full_fn = full_fn
+            self.path = os.path.dirname( full_fn )
+            self.fn = os.path.basename( full_fn )
+
+        else:
+            self.full_fn = os.path.join(path, fn)
+            self.path = path
+            self.fn = fn
+
+        if not os.path.isfile(self.full_fn):
             return
 
-        self.full_fn = full_fn
-        self.fn = fn
-        self.path = path
-        b,e = os.path.splitext(fn)
+        b,e = os.path.splitext(self.fn)
         if e.startswith("."):
             e = e[1:]
         self.base = b
@@ -75,6 +81,9 @@ class FileInfo:
         st = os.stat(full_fn)
 
         return
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def get_parent(root):
@@ -90,23 +99,29 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
 
     if not os.path.isdir(root):
         if verbose >= 1:
-            print("is not dir: %s" % root)
+            print("root is not dir: %s" % root)
         return False
 
-    if recursive is False:
-        tmplist = list()
+    if recursive is True:
+        full_fn_list = list()
+        for dn, dns, fns in os.walk(root):
+            for fn2 in fns:
+                full_fn = os.path.join(dn, fn2)
+                full_fn_list.append(full_fn)
+    else:
+        full_fn_list = list()
         for fn in os.listdir(root):
             full_fn = os.path.join(root, fn)
             if os.path.isfile(full_fn):
-                tmplist.append(FileInfo(root, fn))
-        return tmplist
-    else:
-        fn_list = list()
-        for dn, dns, fns in os.walk(root):
-            for fn2 in fns:
-                if check_filter(filter_dict, fn2):
-                    fn_list.append((os.path.join(dn, fn2),fn2))
-        return fn_list
+                full_fn_list.append( full_fn )
+
+    fi_list = list()
+    for full_fn in full_fn_list:
+        finfo = FileInfo(full_fn=full_fn)
+        if check_filter(finfo, filter_dict):
+            fi_list.append( finfo )
+
+    return fi_list
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
