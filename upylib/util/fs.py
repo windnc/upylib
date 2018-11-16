@@ -127,7 +127,8 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 class DirInfo:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-    fn = None
+    full_dn = None
+    dn = None
     path = None
     base = None
     ext = None
@@ -139,21 +140,29 @@ class DirInfo:
     mstr = None
     size = None
 
-    def __init__(self, path, dn):
-        full_dn = os.path.join(path, dn)
-        if not os.path.isdir(full_dn):
+    def __init__(self, full_dn=None, path=None, dn=None):
+        if full_dn:
+            self.full_dn = full_dn
+            self.path = os.path.dirname( full_dn )
+            self.dn = os.path.basename( full_dn )
+
+        else:
+            self.full_dn = os.path.join(path, dn)
+            self.path = path
+            self.dn = dn
+
+        if not os.path.isdir(self.full_dn):
             return
 
-        self.full_dn = full_dn
-        self.dn = dn
-        self.path = path
-        self.cstamp = int(os.path.getctime(full_dn))
-        self.mstamp = int(os.path.getmtime(full_dn))
+        self.cstamp = int(os.path.getctime(self.full_dn))
+        self.mstamp = int(os.path.getmtime(self.full_dn))
         self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
 
         return
 
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def is_file(path):
