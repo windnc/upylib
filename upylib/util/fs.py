@@ -82,6 +82,13 @@ class FileInfo:
 
         return
 
+    def is_image(self):
+        e = self.ext.lower()
+        if e == "jpg" or e == "png" or e == "gif":
+            return True
+        else:
+            return False
+
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)
 
