@@ -129,9 +129,6 @@ class DirInfo:
     full_dn = None
     dn = None
     path = None
-    base = None
-    ext = None
-    filetype = None
     icon = None
     cstamp = None
     mstamp = None
