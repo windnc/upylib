@@ -22,3 +22,6 @@ print(table_list)
 column_list = udb.get_column_names("tmp")
 print(column_list)
 
+udb.assert_column( "tmp", "hi", "TEXT")
+column_list = udb.get_column_names("tmp")
+print(column_list)

@@ -26,6 +26,10 @@ class USQLite:
         return db_get_column_names(self.db_fn, table_name)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+    def assert_column(self, table_name, column_name, opt):
+        return db_assert_column(self.db_fn, table_name, column_name, opt)
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     def is_table(self, tbl_name, verbosity=1):
         return db_is_table(self.db_fn, tbl_name, verbosity)
 

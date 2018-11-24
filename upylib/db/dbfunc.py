@@ -49,34 +49,39 @@ def db_get_column_names(db_fn, table_name, verbosity=1):
         return False
     return columns
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def db_assert_column(db_fn, table_name, column_name, opt, verbosity=1):
+    columns = db_get_column_names(db_fn, table_name)
+    if not columns:
+        return False
+
+    if column_name in columns:
+        return True
+    else:
+        q = "ALTER TABLE %s ADD COLUMN %s %s" % (table_name, column_name, opt)
+        return db_execute_query(db_fn, q)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_create_table(db_fn, sql, verbosity=1):
+def db_execute_query(db_fn, sql, verbosity=1):
     db = db_connect(db_fn)
     try:
         cur = db.cursor()
         cur.execute(sql)
     except Exception as e:
         if verbosity >= 1:
-            print("db_create_table exception: %s" % e)
+            print("db_execute_query exception: %s" % e)
         return False
     return True
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def db_create_table(db_fn, sql, verbosity=1):
+    return db_execute_query(db_fn, sql, verbosity)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def db_drop_table(db_fn, tbl_name, verbosity=1):
-    try:
-        db = db_connect(db_fn)
-        sql="DROP TABLE IF EXISTS %s" % tbl_name
-        cur = db.cursor()
-        cur.execute(sql)
-
-    except Exception as e:
-        if verbosity >= 1:
-            print("db_drop_table exception: %s" % e)
-        return False
-
-    return True
+    sql="DROP TABLE IF EXISTS %s" % tbl_name
+    return db_execute_query(db_fn, sql, verbosity)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
