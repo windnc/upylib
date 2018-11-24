@@ -31,13 +31,23 @@ def db_recreate(db_fn, verbosity=1):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def db_get_table_names(db_fn, verbosity=1):
     sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
-    print(sql)
     res = db_select_query(db_fn, sql)
     tmplist = list()
     for row in res:
         tmplist.append(row[0])
     return tmplist
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def db_get_column_names(db_fn, table_name, verbosity=1):
+    db = db_connect(db_fn)
+    try:
+        cur = db.cursor()
+        columns = [i[1] for i in cur.execute("PRAGMA table_info(%s)"%table_name)]
+    except Exception as e:
+        if verbosity >= 1:
+            print("db_create_table exception: %s" % e)
+        return False
+    return columns
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8

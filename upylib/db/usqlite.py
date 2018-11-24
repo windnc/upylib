@@ -22,6 +22,10 @@ class USQLite:
         return db_get_table_names(self.db_fn)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+    def get_column_names(self, table_name):
+        return db_get_column_names(self.db_fn, table_name)
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     def is_table(self, tbl_name, verbosity=1):
         return db_is_table(self.db_fn, tbl_name, verbosity)
 
