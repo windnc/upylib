@@ -23,6 +23,14 @@ def regex_replace(s, patt, rep):
 
     return s
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def regex_extract(s, patt, i):
+    res = re.search(patt, s)
+    if res is None:
+        return False
+
+    return res.group(i)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def test():
     """
@@ -40,8 +48,8 @@ def test():
     print(out)
 
     patt = "/(.*)(\\d{4})"
-    out = regex_replace(s, patt, "${1}\n${2}")
-    print(out)
+    res = regex_extract(s, patt, 2)
+    print(res)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if __name__ == "__main__":
