@@ -3,8 +3,7 @@
 
 from __future__ import print_function
 import sys
-import urllib
-from urllib import request
+from urllib import request as urlreq
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
@@ -18,7 +17,7 @@ def read_url(url, retry=1):
 
     for _ in range(0,retry):
         try:
-            c = urllib.request.urlopen(url)
+            c = urlreq.urlopen(url)
             return c.read()
         except Exception as e:
             print(e)
