@@ -77,14 +77,36 @@ class FileInfo:
         self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
         self.size = os.path.getsize(full_fn)
-        self.sizestr = "{:,}".format(self.size)
+        self.size_str_comma = "{:,}".format(self.size)
+        self.size_str = get_filesize_str(self.size)
         st = os.stat(full_fn)
 
         return
 
     def is_image(self):
         e = self.ext.lower()
-        if e == "jpg" or e == "png" or e == "gif":
+        if e == "jpg" or e == "jpeg" or e == "png" or e == "gif":
+            return True
+        else:
+            return False
+
+    def is_movie(self):
+        e = self.ext.lower()
+        if e == "mp4" or e == "avi" or e == "mkv" or e == "wmv" or e == "mpeg":
+            return True
+        else:
+            return False
+
+    def is_music(self):
+        e = self.ext.lower()
+        if e == "mp3" or e == "wav" or e == "flac":
+            return True
+        else:
+            return False
+
+    def is_text(self):
+        e = self.ext.lower()
+        if e == "txt":
             return True
         else:
             return False
