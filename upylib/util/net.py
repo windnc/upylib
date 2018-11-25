@@ -26,3 +26,6 @@ def read_url(url, retry=1):
 
     return False
 
+
+def urlenc(q):
+    return q
