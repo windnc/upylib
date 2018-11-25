@@ -2,34 +2,42 @@ from PIL import Image
 from PIL import ExifTags
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def save_thumb(src, dst, size, verbose=1):
+def save_thumb(src_fi, dst_fn, size, verbose=1):
     try:
-        img = Image.open(src)
+        img = Image.open(src_fi.full_fn)
     except Exception as e:
         if verbose>=1:
             print(e)
         return False
 
-    orientation = None
-    for k, v in ExifTags.TAGS.items() : 
-        if v == "Orientation":
-            orientation = k
-            break
+    #if src_fi.ext == "jpg" or src_fi.ext == "jpeg":
+    try:
+        exif_dict = img._getexif()
+        if exif_dict:
 
-    exif_dict = img._getexif()
-    if exif_dict:
-        if exif_dict[orientation] == 3 : 
-            img=img.rotate(180, expand=True)
-        elif exif_dict[orientation] == 6 : 
-            img=img.rotate(270, expand=True)
-        elif exif_dict[orientation] == 8 : 
-            img=img.rotate(90, expand=True)
-        else:
-            pass
+            # rotate
+            orientation = None
+            for k, v in ExifTags.TAGS.items() : 
+                if v == "Orientation":
+                    orientation = k
+                    break
+            if orientation:
+                if exif_dict[orientation] == 3 : 
+                    img=img.rotate(180, expand=True)
+                elif exif_dict[orientation] == 6 : 
+                    img=img.rotate(270, expand=True)
+                elif exif_dict[orientation] == 8 : 
+                    img=img.rotate(90, expand=True)
+                else:
+                    pass
+    except Exception as e:
+        #print(e)
+        pass
 
+    # save
     try:
         img.thumbnail( size, Image.ANTIALIAS )
-        img.save(dst, "JPEG")
+        img.save(dst_fn, "JPEG")
     except Exception as e:
         if verbose>=1:
             print(e)
