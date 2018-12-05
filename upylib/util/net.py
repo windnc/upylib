@@ -4,6 +4,7 @@
 from __future__ import print_function
 import sys
 from urllib import request as urlreq
+import urllib.parse
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
@@ -27,5 +28,8 @@ def read_url(url, retry=1):
     return False
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def urlenc(q):
-    return q
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+    return urllib.parse.quote_plus(q)
+

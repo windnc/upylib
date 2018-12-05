@@ -34,13 +34,15 @@ def save_thumb(src_fi, dst_fn, size, verbose=1):
         #print(e)
         pass
 
+    img = img.convert("RGB")
+
     # save
     try:
         img.thumbnail( size, Image.ANTIALIAS )
         img.save(dst_fn, "JPEG")
     except Exception as e:
         if verbose>=1:
-            print(e)
+            print("Save fail: %s" % e)
         return False
 
     return True
