@@ -225,7 +225,7 @@ def is_file(path):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_dir_list(root, filter_dict=None, recursive=False):
+def get_dir_list(root, recursive=False, ctx=None, verbose=1):
     if not os.path.isdir(root):
         return False
 
@@ -244,8 +244,28 @@ def get_dir_list(root, filter_dict=None, recursive=False):
     di_list = list()
     for full_dn in full_dn_list:
         dinfo = DirInfo(full_dn=full_dn)
-        if check_filter(dinfo, filter_dict):
+        if ctx and "filter" in ctx:
+            if check_filter(dinfo, ctx["filter"]):
+                di_list.append( dinfo )
+            else:
+                # filter
+                pass
+        else:
             di_list.append( dinfo )
+
+    # sort
+    if ctx and "sort" in ctx:
+        if ctx["sort"] == "full_dn" or ctx["sort"] == "full_fn":
+            di_list.sort(key=lambda x: x.full_dn)
+        elif ctx["sort"] == "dn" or ctx["sort"] == "fn":
+            di_list.sort(key=lambda x: x.dn)
+        elif ctx["sort"] == "cstamp":
+            di_list.sort(key=lambda x: x.cstamp)
+        elif ctx["sort"] == "size":
+            fi_list.sort(key=lambda x: x.size)
+
+        if "order" in ctx and ctx["order"] == "desc":
+            di_list.reverse()
 
     return di_list
 
