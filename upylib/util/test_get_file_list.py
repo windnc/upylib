@@ -38,7 +38,7 @@ def test():
         print("fail")
 
     print( "test recursive with ext")
-    finfo_list = get_file_list(root, recursive=True, ctx={ "filter_opt": {"ext":"py"} })
+    finfo_list = get_file_list(root, recursive=True, ctx={ "filter": {"ext":"py"} })
     if finfo_list:
         for i, finfo in enumerate(finfo_list):
             print(finfo.toJson())
@@ -48,6 +48,16 @@ def test():
         print("fail")
 
 
+    print( "test sort")
+    finfo_list = get_file_list(root, recursive=True, ctx={ "filter": {"ext":"py"}, "sort": "size", "order":"desc" })
+    if finfo_list:
+        for i, finfo in enumerate(finfo_list):
+            #print(finfo.toJson())
+            print(finfo.full_fn, finfo.size)
+            #if i >= 3:
+            #    break
+    else:
+        print("fail")
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if __name__ == "__main__": test()
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8

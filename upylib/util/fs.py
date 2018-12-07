@@ -148,14 +148,29 @@ def get_file_list(root, recursive=False, ctx=None, verbose=1):
     fi_list = list()
     for full_fn in full_fn_list:
         finfo = FileInfo(full_fn=full_fn)
-        if ctx and "filter_opt" in ctx:
-            if check_filter(finfo, ctx["filter_opt"]):
+        if ctx and "filter" in ctx:
+            if check_filter(finfo, ctx["filter"]):
                 fi_list.append( finfo )
             else:
                 # filter
                 pass
         else:
             fi_list.append( finfo )
+
+    # sort
+    if ctx and "sort" in ctx:
+        if ctx["sort"] == "full_fn":
+            fi_list.sort(key=lambda x: x.full_fn)
+        elif ctx["sort"] == "fn":
+            fi_list.sort(key=lambda x: x.fn)
+        elif ctx["sort"] == "cstamp":
+            fi_list.sort(key=lambda x: x.cstamp)
+        elif ctx["sort"] == "size":
+            fi_list.sort(key=lambda x: x.size)
+
+        if "order" in ctx and ctx["order"] == "desc":
+            fi_list.reverse()
+
 
     return fi_list
 
