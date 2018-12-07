@@ -16,14 +16,40 @@ if sys.version_info<(3,0,0):
     sys.setdefaultencoding('utf8')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def is_movie(fn):
+def extract_ext(fn, lowcase=True):
     if not fn: return False
-    ext = os.path.splitext(fn)[1].lower()
-    if ext == ".mp4": return True
-    elif ext == ".avi": return True
-    elif ext == ".mkv": return True
+    ext = os.path.splitext(fn)[1]
+    if len(ext) > 0 and ext[0] == '.': ext = ext[1:]
+    if lowcase: ext = ext.lower()
+    return ext
 
-    return False
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_movie(fn):
+    ext = extract_ext(fn)
+    if not ext: return False
+    if ext in ("mp4", "mkv", "wmv", "avi"): return True
+    else: return False
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_image(fn):
+    ext = extract_ext(fn)
+    if not ext: return False
+    if ext in ("jpg", "png", "gif", "bmp"): return True
+    else: return False
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_music(fn):
+    ext = extract_ext(fn)
+    if not ext: return False
+    if ext in ("mp3", "wav", "flac"): return True
+    else: return False
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def is_text(fn):
+    ext = extract_ext(fn)
+    if not ext: return False
+    if ext in ("txt", "md", "ini", "json", "c", "cpp", "h", "py", "java"): return True
+    else: return False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def check_filter(finfo, filter_dict):
@@ -84,32 +110,16 @@ class FileInfo:
         return
 
     def is_image(self):
-        e = self.ext.lower()
-        if e == "jpg" or e == "jpeg" or e == "png" or e == "gif":
-            return True
-        else:
-            return False
+        return is_image(self.fn)
 
     def is_movie(self):
-        e = self.ext.lower()
-        if e == "mp4" or e == "avi" or e == "mkv" or e == "wmv" or e == "mpeg":
-            return True
-        else:
-            return False
+        return is_movie(self.fn)
 
     def is_music(self):
-        e = self.ext.lower()
-        if e == "mp3" or e == "wav" or e == "flac":
-            return True
-        else:
-            return False
+        return is_music(self.fn)
 
     def is_text(self):
-        e = self.ext.lower()
-        if e == "txt":
-            return True
-        else:
-            return False
+        return is_text(self.fn)
 
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)
