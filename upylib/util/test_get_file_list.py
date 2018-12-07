@@ -8,22 +8,46 @@ from fs import *
 def test():
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     print( "test invlid")
-    file_list = get_file_list("a")
+    root = "a"
+    print(root)
+    file_list = get_file_list(root)
+    if file_list:
+        print(fi_list)
+    else:
+        print("fail")
 
-    print( "test")
-    finfo_list = get_file_list("../")
-    for finfo in finfo_list:
-        print(finfo.toJson())
+    root = "../"
+    print(root)
+    finfo_list = get_file_list(root)
+    if finfo_list:
+        for i, finfo in enumerate(finfo_list):
+            print(finfo.toJson())
+            if i >= 3:
+                break
+    else:
+        print("fail")
 
     print( "test recursive")
-    finfo_list = get_file_list("../", recursive=True)
-    for finfo in finfo_list:
-        print(finfo.toJson())
+    finfo_list = get_file_list(root, recursive=True)
+    if finfo_list:
+        for i, finfo in enumerate(finfo_list):
+            print(finfo.toJson())
+            if i >= 3:
+                break
+    else:
+        print("fail")
 
     print( "test recursive with ext")
-    finfo_list = get_file_list("../", recursive=True, filter_dict={"ext":"py"})
-    for finfo in finfo_list:
-        print(finfo.toJson())
+    finfo_list = get_file_list(root, recursive=True, ctx={ "filter_opt": {"ext":"py"} })
+    if finfo_list:
+        for i, finfo in enumerate(finfo_list):
+            print(finfo.toJson())
+            if i >= 3:
+                break
+    else:
+        print("fail")
+
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if __name__ == "__main__": test()
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8

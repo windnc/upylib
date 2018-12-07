@@ -122,7 +122,7 @@ def get_parent(root):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
+def get_file_list(root, recursive=False, ctx=None, verbose=1):
     if verbose >= 3:
         print("get_file_list: %s" % root)
 
@@ -131,6 +131,7 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
             print("root is not dir: %s" % root)
         return False
 
+    # init: get all files
     full_fn_list = list()
     if recursive is True:
         for dn, dns, fns in os.walk(root):
@@ -143,10 +144,17 @@ def get_file_list(root, filter_dict=None, recursive=False, verbose=1):
             if os.path.isfile(full_fn):
                 full_fn_list.append( full_fn )
 
+    # filter
     fi_list = list()
     for full_fn in full_fn_list:
         finfo = FileInfo(full_fn=full_fn)
-        if check_filter(finfo, filter_dict):
+        if ctx and "filter_opt" in ctx:
+            if check_filter(finfo, ctx["filter_opt"]):
+                fi_list.append( finfo )
+            else:
+                # filter
+                pass
+        else:
             fi_list.append( finfo )
 
     return fi_list
