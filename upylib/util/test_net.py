@@ -14,6 +14,13 @@ def test():
     else:
         print("fail")
 
+    q="한글 문자열"
+    qenc = urlenc(q)
+    if qenc:
+        print(qenc)
+    else:
+        print("fail")
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if __name__ == "__main__": test()
