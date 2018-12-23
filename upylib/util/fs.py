@@ -387,7 +387,7 @@ def assert_dir(dn, verbose=1):
 
     if verbose>=2:
         print("try to make dirs: %s" % (dn))
-    os.makedirs(dn)
+    os.makedirs(dn, exist_ok=True)
 
     return os.path.exists(dn)
 

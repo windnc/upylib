@@ -24,6 +24,13 @@ def regex_replace(s, patt, rep):
     return s
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+def regex_match(s, patt):
+    res = re.search(patt, s)
+    if res is None:
+        return False
+    return True
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def regex_extract(s, patt, i):
     res = re.search(patt, s)
     if res is None:
@@ -40,6 +47,10 @@ def test():
     """
     s = "/banana/apple/cup (2018)/"
     print(s)
+
+    patt = "/ba(.*)/"
+    print(patt)
+    print( regex_match(s, patt) )
 
     patt = "/(.*)(.*)"
     print(patt)
