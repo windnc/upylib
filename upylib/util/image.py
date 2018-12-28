@@ -1,5 +1,7 @@
 from PIL import Image
+from PIL import ImageFile
 from PIL import ExifTags
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 def save_thumb(src_fn, dst_fn, size, verbose=1):
@@ -31,12 +33,17 @@ def save_thumb(src_fn, dst_fn, size, verbose=1):
                 else:
                     pass
     except Exception as e:
-        if verbose>=1:
+        if verbose>=2:
             print(e)
         pass
 
     # prevent alpha channel warning
-    img = img.convert("RGB")
+    try:
+        img = img.convert("RGB")
+    except Exception as e:
+        if verbose>=2:
+            print("convert RGB fail: %s" % e)
+        pass
 
     # save
     try:
@@ -62,4 +69,6 @@ def test_save_thumb():
         print("fail")
 
 
-test_save_thumb()
+
+if __name__ == '__main__':
+    test_save_thumb()
