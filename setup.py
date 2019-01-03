@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(name='upylib',
       packages=find_packages(),
-      version='0.4.21',
+      version='0.4.22',
       url='https://gitlab.com',
       author='windnc',
       author_email='windnc@gmail.com',
