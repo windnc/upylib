@@ -77,9 +77,6 @@ class UMySQL:
             return False
 
         cur = self.db.cursor()
-        print(cur)
-        print(sql)
-        print(data)
         cur.execute(sql, data)
         self.db.commit()
 
