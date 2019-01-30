@@ -3,6 +3,7 @@ from PIL import ImageFile
 from PIL import ExifTags
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+Image.warnings.simplefilter('error', Image.DecompressionBombWarning)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 def save_thumb(src_fn, dst_fn, size, verbose=1):
@@ -52,9 +53,10 @@ def save_thumb(src_fn, dst_fn, size, verbose=1):
         if "exif" in img.info:
             img.save(dst_fn, "JPEG", exif=img.info["exif"])
         else:
-            if verbose>=2:
+            if verbose>=1:
                 print("no exif")
-            img.save(dst_fn, "JPEG")
+            #img.save(dst_fn, "JPEG")
+            return False
     except Exception as e:
         if verbose>=1:
             print("Save fail: %s" % e)
