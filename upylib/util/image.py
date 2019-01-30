@@ -1,6 +1,7 @@
 from PIL import Image
 from PIL import ImageFile
 from PIL import ExifTags
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -48,7 +49,11 @@ def save_thumb(src_fn, dst_fn, size, verbose=1):
     # save
     try:
         img.thumbnail( size, Image.ANTIALIAS )
-        img.save(dst_fn, "JPEG")
+        if "exif" in img.info:
+            print("exif")
+            img.save(dst_fn, "JPEG", exif=img.info["exif"])
+        else:
+            img.save(dst_fn, "JPEG")
     except Exception as e:
         if verbose>=1:
             print("Save fail: %s" % e)
