@@ -50,9 +50,10 @@ def save_thumb(src_fn, dst_fn, size, verbose=1):
     try:
         img.thumbnail( size, Image.ANTIALIAS )
         if "exif" in img.info:
-            print("exif")
             img.save(dst_fn, "JPEG", exif=img.info["exif"])
         else:
+            if verbose>=2:
+                print("no exif")
             img.save(dst_fn, "JPEG")
     except Exception as e:
         if verbose>=1:
