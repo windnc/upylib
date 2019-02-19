@@ -135,7 +135,7 @@ class TestGetParent(unittest.TestCase):
         self.assertEqual(get_parent(root="/"), "")
 
 def get_file_list(root, recursive=False, ctx=None):
-    from fileinfo import FileInfo
+    from upylib.util.fileinfo import FileInfo
 
     if not os.path.isdir(root):
         return False

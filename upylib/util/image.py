@@ -2,7 +2,6 @@ import os
 import unittest
 from PIL import Image
 from PIL import ImageFile
-from PIL import ExifTags
 import logging
 import piexif
 logger = logging.getLogger(__name__)
@@ -81,7 +80,7 @@ class TestSaveThumb(unittest.TestCase):
         self.assertTrue(res)
 
     def test_2(self):
-        from fs import get_file_list
+        from upylib.util.fs import get_file_list
         flist = get_file_list("/tmp/tmpimg")
         for fi in flist:
             size = (120, 100)

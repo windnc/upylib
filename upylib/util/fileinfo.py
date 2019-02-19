@@ -43,7 +43,7 @@ class FileInfo:
         self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
         self.size = os.path.getsize(full_fn)
-        from fs import get_filesize_str
+        from upylib.util.fs import get_filesize_str
         self.size_str = get_filesize_str(self.size)
         self.is_valid = True
 
