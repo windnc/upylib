@@ -99,7 +99,6 @@ class DirInfo:
             self.path = path
             self.dn = dn
 
-        print(self.full_dn)
         if not os.path.isdir(self.full_dn):
             return
 
