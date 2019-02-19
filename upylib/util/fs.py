@@ -1,57 +1,116 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-⏎
-
-from __future__ import print_function
-import sys
+#!/usr/bin/env python3
 import os
-import json
-import time
 import hashlib
 import shutil
-import datetime
+import unittest
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-if sys.version_info<(3,0,0):
-    reload(sys)
-    sys.setdefaultencoding('utf8')
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 def extract_ext(fn, lowcase=True):
-    if not fn: return False
+    if not fn:
+        return ""
     ext = os.path.splitext(fn)[1]
-    if len(ext) > 0 and ext[0] == '.': ext = ext[1:]
-    if lowcase: ext = ext.lower()
+    if len(ext) > 0 and ext[0] == '.':
+        ext = ext[1:]
+    if lowcase:
+        ext = ext.lower()
     return ext
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestExtractExt(unittest.TestCase):
+    def test_1(self):
+        print("test_extract_ext")
+        ext = extract_ext(fn="hello.txt")
+        self.assertEqual(ext, "txt")
+        ext = extract_ext(fn="/home/hello")
+        self.assertEqual(ext, "")
+        ext = extract_ext(fn="")
+        self.assertEqual(ext, "")
+        ext = extract_ext(fn="out.MP4")
+        self.assertEqual(ext, "mp4")
+        ext = extract_ext(fn=".bashrc")
+        self.assertEqual(ext, "")
+        ext = extract_ext(fn="out.MP4", lowcase=False)
+        self.assertEqual(ext, "MP4")
+
+
 def is_movie(fn):
     ext = extract_ext(fn)
-    if not ext: return False
-    if ext in ("mp4", "mkv", "wmv", "avi"): return True
-    else: return False
+    if not ext:
+        return False
+    if ext in ("mp4", "mkv", "wmv", "avi"):
+        return True
+    else:
+        return False
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestIsMovie(unittest.TestCase):
+    def test_1(self):
+        print("test_is_movie")
+        self.assertTrue(is_movie(fn="out.MP4"))
+        self.assertTrue(is_movie(fn="out.avi"))
+        self.assertFalse(is_movie(fn="out.mp3"))
+        self.assertFalse(is_movie(fn=".mkv"))
+
+
 def is_image(fn):
     ext = extract_ext(fn)
-    if not ext: return False
-    if ext in ("jpg", "png", "gif", "bmp"): return True
-    else: return False
+    if not ext:
+        return False
+    if ext in ("jpg", "png", "gif", "bmp"):
+        return True
+    else:
+        return False
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestIsImage(unittest.TestCase):
+    def test_1(self):
+        print("test_is_image")
+        self.assertTrue(is_image(fn="out.jpg"))
+        self.assertTrue(is_image(fn="out.png"))
+        self.assertFalse(is_image(fn=""))
+        self.assertFalse(is_image(fn="out.c"))
+
+
 def is_music(fn):
     ext = extract_ext(fn)
-    if not ext: return False
-    if ext in ("mp3", "wav", "flac"): return True
-    else: return False
+    if not ext:
+        return False
+    if ext in ("mp3", "wav", "mid", "aac", "flac"):
+        return True
+    else:
+        return False
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestIsMusic(unittest.TestCase):
+    def test_1(self):
+        print("test_is_music")
+        self.assertTrue(is_music(fn="out.mp3"))
+        self.assertTrue(is_music(fn="out.wav"))
+        self.assertTrue(is_music(fn="out.mid"))
+        self.assertFalse(is_music(fn="out.h"))
+
+
 def is_text(fn):
     ext = extract_ext(fn)
-    if not ext: return False
-    if ext in ("txt", "md", "ini", "json", "c", "cpp", "h", "py", "java"): return True
-    else: return False
+    if not ext:
+        return False
+    if ext in ("txt", "md", "ini", "json", "c", "cpp", "php", "h", "py", "java"):
+        return True
+    else:
+        return False
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestIsText(unittest.TestCase):
+    def test_1(self):
+        print("test_is_text")
+        self.assertTrue(is_text(fn="out.txt"))
+        self.assertTrue(is_text(fn="out.md"))
+        self.assertTrue(is_text(fn="out.php"))
+
+
 def check_filter(finfo, filter_dict):
     if not filter_dict:
         return True
@@ -63,82 +122,22 @@ def check_filter(finfo, filter_dict):
     return True
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-class FileInfo:
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-    full_fn = None
-    fn = None
-    path = None
-    base = None
-    ext = None
-    filetype = None
-    icon = None
-    cstamp = None
-    mstamp = None
-    cstr = None
-    mstr = None
-    size = None
-
-    def __init__(self, full_fn=None, path=None, fn=None):
-        if full_fn:
-            self.full_fn = full_fn
-            self.path = os.path.dirname( full_fn )
-            self.fn = os.path.basename( full_fn )
-
-        else:
-            self.full_fn = os.path.join(path, fn)
-            self.path = path
-            self.fn = fn
-
-        if not os.path.isfile(self.full_fn):
-            return
-
-        b,e = os.path.splitext(self.fn)
-        if e.startswith("."):
-            e = e[1:]
-        self.base = b
-        self.ext = e
-        self.cstamp = int(os.path.getctime(full_fn))
-        self.mstamp = int(os.path.getmtime(full_fn))
-        self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
-        self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
-        self.size = os.path.getsize(full_fn)
-        self.size_str_comma = "{:,}".format(self.size)
-        self.size_str = get_filesize_str(self.size)
-        st = os.stat(full_fn)
-
-        return
-
-    def is_image(self):
-        return is_image(self.fn)
-
-    def is_movie(self):
-        return is_movie(self.fn)
-
-    def is_music(self):
-        return is_music(self.fn)
-
-    def is_text(self):
-        return is_text(self.fn)
-
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_parent(root):
+def get_parent(root:str) -> str:
     if root == "/":
-        return None
+        return ""
     return os.path.abspath(os.path.join(root, os.pardir))
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_file_list(root, recursive=False, ctx=None, verbose=1):
-    if verbose >= 3:
-        print("get_file_list: %s" % root)
+class TestGetParent(unittest.TestCase):
+    def test_1(self):
+        print("test_get_parent")
+        self.assertEqual(get_parent(root="/tmp"), "/")
+        self.assertEqual(get_parent(root="/"), "")
+
+def get_file_list(root, recursive=False, ctx=None):
+    from fileinfo import FileInfo
 
     if not os.path.isdir(root):
-        if verbose >= 1:
-            print("root is not dir: %s" % root)
         return False
 
     # init: get all files
@@ -185,60 +184,38 @@ def get_file_list(root, recursive=False, ctx=None, verbose=1):
     return fi_list
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-class DirInfo:
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-    full_dn = None
-    dn = None
-    path = None
-    icon = None
-    cstamp = None
-    mstamp = None
-    cstr = None
-    mstr = None
-    size = None
+class TestGetFileList(unittest.TestCase):
+    def test_1(self):
+        print("test_get_file_list")
+        self.assertTrue(get_file_list(root="/tmp", recursive=True))
 
-    def __init__(self, full_dn=None, path=None, dn=None):
-        if full_dn:
-            self.full_dn = full_dn
-            self.path = os.path.dirname( full_dn )
-            self.dn = os.path.basename( full_dn )
 
-        else:
-            self.full_dn = os.path.join(path, dn)
-            self.path = path
-            self.dn = dn
 
-        if not os.path.isdir(self.full_dn):
-            return
-
-        self.cstamp = int(os.path.getctime(self.full_dn))
-        self.mstamp = int(os.path.getmtime(self.full_dn))
-        self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
-        self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
-
-        return
-
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def is_file(path):
-    if os.path.isfile(path):
+def is_file(fn):
+    if os.path.isfile(fn):
         return True
     else:
         # broken symlink
-        if os.path.islink(path):
+        if os.path.islink(fn):
             return True
         else:
             return False
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_dir_list(root, recursive=False, ctx=None, verbose=1):
+class TestIsFile(unittest.TestCase):
+    def test_1(self):
+        print("test_is_file")
+        with open("/tmp/src", "w") as fo:
+            print("hi", file=fo)
+        self.assertTrue(is_file(fn="/tmp/src"))
+        self.assertFalse(is_file(fn="/tmp/no-file"))
+
+
+def get_dir_list(root, recursive=False, ctx=None):
     if not os.path.isdir(root):
         return False
 
+    from fileinfo import DirInfo
     full_dn_list = list()
     if recursive is True:
         for dn, dns, fns in os.walk(root):
@@ -256,12 +233,12 @@ def get_dir_list(root, recursive=False, ctx=None, verbose=1):
         dinfo = DirInfo(full_dn=full_dn)
         if ctx and "filter" in ctx:
             if check_filter(dinfo, ctx["filter"]):
-                di_list.append( dinfo )
+                di_list.append(dinfo)
             else:
                 # filter
                 pass
         else:
-            di_list.append( dinfo )
+            di_list.append(dinfo)
 
     # sort
     if ctx and "sort" in ctx:
@@ -272,7 +249,7 @@ def get_dir_list(root, recursive=False, ctx=None, verbose=1):
         elif ctx["sort"] == "cstamp":
             di_list.sort(key=lambda x: x.cstamp)
         elif ctx["sort"] == "size":
-            fi_list.sort(key=lambda x: x.size)
+            di_list.sort(key=lambda x: x.size)
 
         if "order" in ctx and ctx["order"] == "desc":
             di_list.reverse()
@@ -280,153 +257,160 @@ def get_dir_list(root, recursive=False, ctx=None, verbose=1):
     return di_list
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def is_empty_dir(root, verbose=1):
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 1:
-        print("is_empty_dir: %s" % (root))
+class TestGetDirList(unittest.TestCase):
+    def test_1(self):
+        print("test_get_dir_lsit")
+        self.assertTrue(get_dir_list(root="/tmp", recursive=True))
+
+
+def is_empty_dir(root):
+    logging.debug("is empty dir: %s" % root)
 
     file_list = get_file_list(root, recursive=False)
     if file_list is False:
-        if verbose >= 2:
-            print( "false file_list: %s" % root)
+        logging.info("file list fail: %s" % root)
         return False
     if len(file_list) > 0:
-        if verbose >= 2:
-            print( "file more than 0")
+        logging.debug("more than 0 file")
         return False
 
     dir_list = get_dir_list(root, recursive=False)
     if dir_list is False:
-        if verbose >= 2:
-            print( "false dir_list: %s" % root)
+        logging.info("dir list fail: %s" % root)
         return False
     if len(dir_list) > 0:
-        if verbose >= 2:
-            print( "dir more than 0")
+        logging.debug("more than 0 dir")
         return False
 
     return True
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def del_empty_dir(root, verbose=1):
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 1:
-        print("del_empty_dir: %s" % (root))
 
-    if not is_empty_dir(root, verbose):
+class TestIsEmptyDir(unittest.TestCase):
+    def test_1(self):
+        print("test_is_empty_dir")
+        assert_dir("/tmp/empty")
+        self.assertTrue(is_empty_dir("/tmp/empty"))
+
+
+def del_empty_dir(root):
+    logging.debug("del empty dir: %s" % root)
+
+    if not is_empty_dir(root):
         return True
 
     try:
         os.rmdir(root)
     except Exception as e:
-        if verbose:
-            print("delete error! %s" % (root))
-            print("%s" % (e))
+        logging.info("del dir exception: %s" % e)
         return False
+
     return True
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def del_file(fn, verbose=1):
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 4:
-        print("del_file %s" % (fn))
+
+class TestDelEmptyDir(unittest.TestCase):
+    def test_1(self):
+        print("test_del_empty_dir")
+        assert_dir("/tmp/empty")
+        self.assertTrue(del_empty_dir("/tmp/empty"))
+
+
+def del_file(fn):
+    logging.debug("del file %s" % fn)
 
     try:
         os.remove(fn)
     except Exception as e:
-        if verbose >= 1:
-            print("delete error! %s" % (fn))
-            print(e)
+        logging.info("del file exception: %s" % e)
         return False
+
     return True
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-def assert_no_file(fn, verbose=1):
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose >= 2:
-        print("assert no file %s" % (fn))
+class TestDelFile(unittest.TestCase):
+    def test_1(self):
+        print("test_del_file")
+        with open("/tmp/src", "w") as fo:
+            print("hi", file=fo)
+        self.assertTrue(del_file("/tmp/src"))
+
+def assert_no_file(fn:str) -> bool:
+    logging.debug("assert no file %s" % fn)
 
     if is_file(fn):
-        if verbose >= 2:
-            print("asser no file:del")
-        if not del_file(fn, verbose=verbose):
+        logging.debug("del file: %s" % fn)
+        if not del_file(fn):
             return False
 
     return True
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def move_file(src, tgt, verbose=1):
-    if verbose >= 2:
-        print("move_file %s -> %s" % (src,tgt))
+class TestAssertNoFile(unittest.TestCase):
+    def test_1(self):
+        print("test_assert_no_file")
+        self.assertTrue(assert_no_file("/tmp/tmpdir/aa"))
+
+
+def move_file(src, tgt):
+    logging.debug("move file: %s -> %s" % (src, tgt))
 
     try:
         shutil.move(src, tgt)
     except Exception as e:
-        if verbose >= 1:
-            print("move_file error")
-            print(e)
+        logging.info("move file error: %s" % e)
         return False
 
     return True
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
+class TestMoveFile(unittest.TestCase):
+    def test_1(self):
+        print("test_move_file")
+        with open("/tmp/src", "w") as fo:
+            print("hi", file=fo)
+        self.assertTrue(move_file("/tmp/src", "/tmp/tgt"))
+        self.assertFalse(move_file("/tmp/src", "/tmp/tgt"))
+
 def assert_dir(dn, verbose=1):
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~⏎
-    if verbose>=2:
-        print("assert_dir : %s" % (dn))
+    logging.debug("assert_dir : %s" % dn)
 
     if os.path.exists(dn):
-        if verbose>=2:
-            print("already exists: %s" % (dn))
+        logging.debug("already exists: %s" % dn)
         return True
 
-
-    if verbose>=2:
-        print("try to make dirs: %s" % (dn))
+    logging.debug("try to make dir: %s" % dn)
     os.makedirs(dn, exist_ok=True)
 
     return os.path.exists(dn)
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def txtfile2dict(fn):
-    d = dict()
-    with open(fn,'r') as f:
-        for line in f.readlines():
-            line = line.strip("\n")
-            d[ line ] = True
-    return d
+class TestAssertDir(unittest.TestCase):
+    def test_1(self):
+        print("test_assert_dir")
+        self.assertTrue(assert_dir(dn="/tmp/tmpdir"))
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def tsvfile2dict(fn, keyid, valueid):
-    d = dict()
-    with open(fn,'r') as f:
-        for line in f.readlines():
-            line = line.strip("\n")
-            arr = line.split("\t")
-            d[ arr[keyid] ] = arr[valueid]
-    return d
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def get_md5(fname):
-    if not os.path.exists(fname):
-        return None
+def get_md5(fn):
+    if not fn or not os.path.exists(fn):
+        return ""
 
     hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
+    with open(fn, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+class TestGetMD5(unittest.TestCase):
+    def test_1(self):
+        print("test_getmd5")
+        md5val = get_md5(fn="__init__.py")
+        self.assertEqual(md5val, "d41d8cd98f00b204e9800998ecf8427e")
+        md5val = get_md5(fn="")
+        self.assertEqual(md5val, "")
+
+
 def get_filesize_str(s):
-    if s> 1024 * 1024 * 1024 * 1024: 
+    if s > 1024 * 1024 * 1024 * 1024:
         return "%1.2f TB" % (float(s)/1024/1024/1024/1024)
     elif s > 1024 * 1024 * 1024: 
         return "%1.2f GB" % (float(s)/1024/1024/1024)
@@ -435,18 +419,19 @@ def get_filesize_str(s):
     elif s > 1024:
         return "%1.2f KB" % (float(s)/1024)
     else:
-        return "%d B" % (s)
+        return "%d B" % s
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def test():
-    if len(sys.argv) != 3:
-        print("usage: %s fn-in fn-out" % sys.argv[0])
-        return False
-    return True
+class TestGetFileSizeStr(unittest.TestCase):
+    def test_1(self):
+        print("test_get_filesize_str")
+        self.assertEqual(get_filesize_str(10), "10 B")
+        self.assertEqual(get_filesize_str(3000000), "2.86 MB")
+        self.assertEqual(get_filesize_str(4000000000), "3.73 GB")
+        self.assertEqual(get_filesize_str(5000000000000), "4.55 TB")
+        self.assertEqual(get_filesize_str(6000000000000000), "5456.97 TB")
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
 if __name__ == "__main__":
-    test()
+    unittest.main()
 
