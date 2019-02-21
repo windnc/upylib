@@ -122,7 +122,7 @@ def check_filter(finfo, filter_dict):
     return True
 
 
-def get_parent(root:str) -> str:
+def get_parent(root: str) -> str:
     if root == "/":
         return ""
     return os.path.abspath(os.path.join(root, os.pardir))
@@ -133,6 +133,7 @@ class TestGetParent(unittest.TestCase):
         print("test_get_parent")
         self.assertEqual(get_parent(root="/tmp"), "/")
         self.assertEqual(get_parent(root="/"), "")
+
 
 def get_file_list(root, recursive=False, ctx=None):
     from upylib.util.fileinfo import FileInfo
@@ -151,7 +152,7 @@ def get_file_list(root, recursive=False, ctx=None):
         for fn in os.listdir(root):
             full_fn = os.path.join(root, fn)
             if os.path.isfile(full_fn):
-                full_fn_list.append( full_fn )
+                full_fn_list.append(full_fn)
 
     # filter
     fi_list = list()
@@ -159,12 +160,12 @@ def get_file_list(root, recursive=False, ctx=None):
         finfo = FileInfo(full_fn=full_fn)
         if ctx and "filter" in ctx:
             if check_filter(finfo, ctx["filter"]):
-                fi_list.append( finfo )
+                fi_list.append(finfo)
             else:
                 # filter
                 pass
         else:
-            fi_list.append( finfo )
+            fi_list.append(finfo)
 
     # sort
     if ctx and "sort" in ctx:
@@ -180,7 +181,6 @@ def get_file_list(root, recursive=False, ctx=None):
         if "order" in ctx and ctx["order"] == "desc":
             fi_list.reverse()
 
-
     return fi_list
 
 
@@ -188,7 +188,6 @@ class TestGetFileList(unittest.TestCase):
     def test_1(self):
         print("test_get_file_list")
         self.assertTrue(get_file_list(root="/tmp", recursive=True))
-
 
 
 def is_file(fn):
@@ -215,7 +214,7 @@ def get_dir_list(root, recursive=False, ctx=None):
     if not os.path.isdir(root):
         return False
 
-    from fileinfo import DirInfo
+    from upylib.util.fileinfo import DirInfo
     full_dn_list = list()
     if recursive is True:
         for dn, dns, fns in os.walk(root):
@@ -333,7 +332,8 @@ class TestDelFile(unittest.TestCase):
             print("hi", file=fo)
         self.assertTrue(del_file("/tmp/src"))
 
-def assert_no_file(fn:str) -> bool:
+
+def assert_no_file(fn: str) -> bool:
     logging.debug("assert no file %s" % fn)
 
     if is_file(fn):
@@ -370,7 +370,8 @@ class TestMoveFile(unittest.TestCase):
         self.assertTrue(move_file("/tmp/src", "/tmp/tgt"))
         self.assertFalse(move_file("/tmp/src", "/tmp/tgt"))
 
-def assert_dir(dn, verbose=1):
+
+def assert_dir(dn):
     logging.debug("assert_dir : %s" % dn)
 
     if os.path.exists(dn):
@@ -424,7 +425,6 @@ def get_filesize_str(s):
 
 class TestGetFileSizeStr(unittest.TestCase):
     def test_1(self):
-        print("test_get_filesize_str")
         self.assertEqual(get_filesize_str(10), "10 B")
         self.assertEqual(get_filesize_str(3000000), "2.86 MB")
         self.assertEqual(get_filesize_str(4000000000), "3.73 GB")
@@ -434,4 +434,3 @@ class TestGetFileSizeStr(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
