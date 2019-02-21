@@ -9,7 +9,7 @@ setup(name='upylib',
       license='MIT',
       long_description=open('README.md').read(),
       zip_safe=False,
-      setup_requires=[]
+      setup_requires=[], install_requires=['piexif', 'Pillow']
       )
 #python_requires  = '>=3',
 #packages=find_packages(exclude=['doc', 'test*']),
