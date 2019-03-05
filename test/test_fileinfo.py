@@ -1,15 +1,26 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-⏎
+from upylib.util.fileinfo import FileInfo, DirInfo
 
-from __future__ import print_function
-from upylib.util.fs import *
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
+def test_1():
+    fi = FileInfo("test_fileinfo.py")
+    assert fi.is_valid
+
+    fi = FileInfo("nofile.ext")
+    assert not fi.is_valid
+
+
+def test_2():
+    di = DirInfo("/var/log")
+    assert di.is_valid
+
+    di = DirInfo("/var/log/nodir")
+    assert not di.is_valid
+
+
+"""
 def del_empty_dir( root ):
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
     dir_list = get_dir_list( root )
     for (dn, just_dn) in dir_list:
         fn_list = get_file_list( dn )
@@ -19,9 +30,7 @@ def del_empty_dir( root ):
             os.remove( fn )
             os.rmdir( dn )
 
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
 def run():
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
     root="/mnt/disk-media/unitf-data/archive"
     f_dict=dict()
     f_dict["contain"] = list()
@@ -36,6 +45,5 @@ def run():
     del_empty_dir( root )
 
 
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
 if __name__ == "__main__": run()
-#~~~~~~~~~1~~~~~~~~~2~~~~~~~~~3~~~~~~~~~4~~~~~~~~~5~~~~~~~~~6~~~~~~~~~7~~~~~~~~~
+"""

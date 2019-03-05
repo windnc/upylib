@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-import unittest
+from fs import is_image, is_text, is_music, is_movie
 
 
 class FileInfo:
@@ -68,14 +68,6 @@ class FileInfo:
         return self.jsonify()
 
 
-class TestFileInfo(unittest.TestCase):
-    def test_1(self):
-        fi = FileInfo("image.py")
-        self.assertTrue(fi.is_valid)
-        fi = FileInfo("nofile.ext")
-        self.assertFalse(fi.is_valid)
-
-
 class DirInfo:
     abs_dn = None
     full_dn = None
@@ -118,12 +110,6 @@ class DirInfo:
         return self.jsonify()
 
 
-class TestDirInfo(unittest.TestCase):
-    def test_1(self):
-        di = DirInfo("/var/log")
-        self.assertTrue(di.is_valid)
-        di = DirInfo("/var/log/nodir")
-        self.assertFalse(di.is_valid)
 
 
 if __name__ == "__main__":
