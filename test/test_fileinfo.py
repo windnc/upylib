@@ -3,15 +3,15 @@
 from upylib.util.fileinfo import FileInfo, DirInfo
 
 
-def test_1():
-    fi = FileInfo("test_fileinfo.py")
+def test_fileinfo():
+    fi = FileInfo("README.md")
     assert fi.is_valid
 
     fi = FileInfo("nofile.ext")
     assert not fi.is_valid
 
 
-def test_2():
+def test_dirinfo():
     di = DirInfo("/var/log")
     assert di.is_valid
 
