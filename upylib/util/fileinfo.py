@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-from fs import is_image, is_text, is_music, is_movie
+from upylib.util.fs import is_image, is_text, is_music, is_movie
 
 
 class FileInfo:
