@@ -108,9 +108,3 @@ class DirInfo:
 
     def __repr__(self):
         return self.jsonify()
-
-
-
-
-if __name__ == "__main__":
-    unittest.main()

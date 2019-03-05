@@ -2,7 +2,6 @@
 import os
 import hashlib
 import shutil
-import unittest
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -19,23 +18,6 @@ def extract_ext(fn, lowcase=True):
     return ext
 
 
-class TestExtractExt(unittest.TestCase):
-    def test_1(self):
-        print("test_extract_ext")
-        ext = extract_ext(fn="hello.txt")
-        self.assertEqual(ext, "txt")
-        ext = extract_ext(fn="/home/hello")
-        self.assertEqual(ext, "")
-        ext = extract_ext(fn="")
-        self.assertEqual(ext, "")
-        ext = extract_ext(fn="out.MP4")
-        self.assertEqual(ext, "mp4")
-        ext = extract_ext(fn=".bashrc")
-        self.assertEqual(ext, "")
-        ext = extract_ext(fn="out.MP4", lowcase=False)
-        self.assertEqual(ext, "MP4")
-
-
 def is_movie(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -44,15 +26,6 @@ def is_movie(fn):
         return True
     else:
         return False
-
-
-class TestIsMovie(unittest.TestCase):
-    def test_1(self):
-        print("test_is_movie")
-        self.assertTrue(is_movie(fn="out.MP4"))
-        self.assertTrue(is_movie(fn="out.avi"))
-        self.assertFalse(is_movie(fn="out.mp3"))
-        self.assertFalse(is_movie(fn=".mkv"))
 
 
 def is_image(fn):
@@ -65,15 +38,6 @@ def is_image(fn):
         return False
 
 
-class TestIsImage(unittest.TestCase):
-    def test_1(self):
-        print("test_is_image")
-        self.assertTrue(is_image(fn="out.jpg"))
-        self.assertTrue(is_image(fn="out.png"))
-        self.assertFalse(is_image(fn=""))
-        self.assertFalse(is_image(fn="out.c"))
-
-
 def is_music(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -84,15 +48,6 @@ def is_music(fn):
         return False
 
 
-class TestIsMusic(unittest.TestCase):
-    def test_1(self):
-        print("test_is_music")
-        self.assertTrue(is_music(fn="out.mp3"))
-        self.assertTrue(is_music(fn="out.wav"))
-        self.assertTrue(is_music(fn="out.mid"))
-        self.assertFalse(is_music(fn="out.h"))
-
-
 def is_text(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -101,14 +56,6 @@ def is_text(fn):
         return True
     else:
         return False
-
-
-class TestIsText(unittest.TestCase):
-    def test_1(self):
-        print("test_is_text")
-        self.assertTrue(is_text(fn="out.txt"))
-        self.assertTrue(is_text(fn="out.md"))
-        self.assertTrue(is_text(fn="out.php"))
 
 
 def check_filter(finfo, filter_dict):
@@ -126,13 +73,6 @@ def get_parent(root: str) -> str:
     if root == "/":
         return ""
     return os.path.abspath(os.path.join(root, os.pardir))
-
-
-class TestGetParent(unittest.TestCase):
-    def test_1(self):
-        print("test_get_parent")
-        self.assertEqual(get_parent(root="/tmp"), "/")
-        self.assertEqual(get_parent(root="/"), "")
 
 
 def get_file_list(root, recursive=False, ctx=None):
@@ -184,12 +124,6 @@ def get_file_list(root, recursive=False, ctx=None):
     return fi_list
 
 
-class TestGetFileList(unittest.TestCase):
-    def test_1(self):
-        print("test_get_file_list")
-        self.assertTrue(get_file_list(root="/tmp", recursive=True))
-
-
 def is_file(fn):
     if os.path.isfile(fn):
         return True
@@ -199,15 +133,6 @@ def is_file(fn):
             return True
         else:
             return False
-
-
-class TestIsFile(unittest.TestCase):
-    def test_1(self):
-        print("test_is_file")
-        with open("/tmp/src", "w") as fo:
-            print("hi", file=fo)
-        self.assertTrue(is_file(fn="/tmp/src"))
-        self.assertFalse(is_file(fn="/tmp/no-file"))
 
 
 def get_dir_list(root, recursive=False, ctx=None):
@@ -256,12 +181,6 @@ def get_dir_list(root, recursive=False, ctx=None):
     return di_list
 
 
-class TestGetDirList(unittest.TestCase):
-    def test_1(self):
-        print("test_get_dir_lsit")
-        self.assertTrue(get_dir_list(root="/tmp", recursive=True))
-
-
 def is_empty_dir(root):
     logging.debug("is empty dir: %s" % root)
 
@@ -284,13 +203,6 @@ def is_empty_dir(root):
     return True
 
 
-class TestIsEmptyDir(unittest.TestCase):
-    def test_1(self):
-        print("test_is_empty_dir")
-        assert_dir("/tmp/empty")
-        self.assertTrue(is_empty_dir("/tmp/empty"))
-
-
 def del_empty_dir(root):
     logging.debug("del empty dir: %s" % root)
 
@@ -306,13 +218,6 @@ def del_empty_dir(root):
     return True
 
 
-class TestDelEmptyDir(unittest.TestCase):
-    def test_1(self):
-        print("test_del_empty_dir")
-        assert_dir("/tmp/empty")
-        self.assertTrue(del_empty_dir("/tmp/empty"))
-
-
 def del_file(fn):
     logging.debug("del file %s" % fn)
 
@@ -323,14 +228,6 @@ def del_file(fn):
         return False
 
     return True
-
-
-class TestDelFile(unittest.TestCase):
-    def test_1(self):
-        print("test_del_file")
-        with open("/tmp/src", "w") as fo:
-            print("hi", file=fo)
-        self.assertTrue(del_file("/tmp/src"))
 
 
 def assert_no_file(fn: str) -> bool:
@@ -344,12 +241,6 @@ def assert_no_file(fn: str) -> bool:
     return True
 
 
-class TestAssertNoFile(unittest.TestCase):
-    def test_1(self):
-        print("test_assert_no_file")
-        self.assertTrue(assert_no_file("/tmp/tmpdir/aa"))
-
-
 def move_file(src, tgt):
     logging.debug("move file: %s -> %s" % (src, tgt))
 
@@ -360,15 +251,6 @@ def move_file(src, tgt):
         return False
 
     return True
-
-
-class TestMoveFile(unittest.TestCase):
-    def test_1(self):
-        print("test_move_file")
-        with open("/tmp/src", "w") as fo:
-            print("hi", file=fo)
-        self.assertTrue(move_file("/tmp/src", "/tmp/tgt"))
-        self.assertFalse(move_file("/tmp/src", "/tmp/tgt"))
 
 
 def assert_dir(dn):
@@ -384,12 +266,6 @@ def assert_dir(dn):
     return os.path.exists(dn)
 
 
-class TestAssertDir(unittest.TestCase):
-    def test_1(self):
-        print("test_assert_dir")
-        self.assertTrue(assert_dir(dn="/tmp/tmpdir"))
-
-
 def get_md5(fn):
     if not fn or not os.path.exists(fn):
         return ""
@@ -399,15 +275,6 @@ def get_md5(fn):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
-
-
-class TestGetMD5(unittest.TestCase):
-    def test_1(self):
-        print("test_getmd5")
-        md5val = get_md5(fn="__init__.py")
-        self.assertEqual(md5val, "d41d8cd98f00b204e9800998ecf8427e")
-        md5val = get_md5(fn="")
-        self.assertEqual(md5val, "")
 
 
 def get_filesize_str(s):
@@ -422,15 +289,3 @@ def get_filesize_str(s):
     else:
         return "%d B" % s
 
-
-class TestGetFileSizeStr(unittest.TestCase):
-    def test_1(self):
-        self.assertEqual(get_filesize_str(10), "10 B")
-        self.assertEqual(get_filesize_str(3000000), "2.86 MB")
-        self.assertEqual(get_filesize_str(4000000000), "3.73 GB")
-        self.assertEqual(get_filesize_str(5000000000000), "4.55 TB")
-        self.assertEqual(get_filesize_str(6000000000000000), "5456.97 TB")
-
-
-if __name__ == "__main__":
-    unittest.main()
