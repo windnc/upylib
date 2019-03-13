@@ -7,6 +7,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 
+class NotExistsError(Exception):
+    pass
+
+
 def extract_ext(fn, lowcase=True):
     if not fn:
         return ""
@@ -79,7 +83,7 @@ def get_file_list(root, recursive=False, ctx=None):
     from upylib.util.fileinfo import FileInfo
 
     if not os.path.isdir(root):
-        return False
+        raise NotExistsError
 
     # init: get all files
     full_fn_list = list()
@@ -137,7 +141,7 @@ def is_file(fn):
 
 def get_dir_list(root, recursive=False, ctx=None):
     if not os.path.isdir(root):
-        return False
+        raise NotExistsError
 
     from upylib.util.fileinfo import DirInfo
     full_dn_list = list()

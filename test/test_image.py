@@ -1,6 +1,7 @@
 import os
 from upylib.util.image import save_thumb
 from upylib.util.fs import get_file_list
+from upylib.util.fs import NotExistsError
 
 
 def test_1():
@@ -12,8 +13,10 @@ def test_1():
 
 
 def test_2():
-    flist = get_file_list("/tmp/tmpimg")
-    if not flist:
+    try:
+        flist = get_file_list("/tmp/tmpimg")
+    except NotExistsError as e:
+        print(e)
         return
 
     for fi in flist:
