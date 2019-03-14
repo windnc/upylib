@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-⏎
 
-import sys
-import os
-import time
 import datetime
+import time
+
 
 def datetime2datedict(d):
     rd = dict()
@@ -16,28 +15,39 @@ def datetime2datedict(d):
     rd["second"] = d.second
     return rd
 
-def ymd2stamp(y,m,d):
+
+def ymd2stamp(y, m, d):
     s = "%d %d %d" % (y, m, d)
     return int(time.mktime(datetime.datetime.strptime(s, "%Y %m %d").timetuple()))
 
+
 def datedict2stamp(d):
-    if "hour" in d: hour = d["hour"]
-    else: hour = 0
-    if "minute" in d: minute = d["minute"]
-    else: minute = 0
-    if "second" in d: second = d["second"]
-    else: second = 0
+    if "hour" in d:
+        hour = d["hour"]
+    else:
+        hour = 0
+    if "minute" in d:
+        minute = d["minute"]
+    else:
+        minute = 0
+    if "second" in d:
+        second = d["second"]
+    else:
+        second = 0
 
     s = "%d %d %d %d %d %d" % (d["year"], d["month"], d["day"], hour, minute, second)
     return int(time.mktime(datetime.datetime.strptime(s, "%Y %m %d %H %M %S").timetuple()))
 
+
 def stamp2datedict(stamp):
-    d = datetime.datetime.fromtimestamp( stamp )
+    d = datetime.datetime.fromtimestamp(stamp)
     return datetime2datedict(d)
+
 
 def get_now_datedict():
     now = datetime.datetime.now()
     return datetime2datedict(now)
+
 
 def test():
     now_dict = get_now_datedict()
@@ -49,7 +59,6 @@ def test():
     now_dict2 = stamp2datedict(stamp)
     print(now_dict2)
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 if __name__ == "__main__":
     test()
-

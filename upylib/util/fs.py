@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import os
 import hashlib
-import shutil
 import logging
+import os
+import shutil
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
@@ -283,13 +284,12 @@ def get_md5(fn):
 
 def get_filesize_str(s):
     if s > 1024 * 1024 * 1024 * 1024:
-        return "%1.2f TB" % (float(s)/1024/1024/1024/1024)
-    elif s > 1024 * 1024 * 1024: 
-        return "%1.2f GB" % (float(s)/1024/1024/1024)
-    elif s > 1024 * 1024: 
-        return "%1.2f MB" % (float(s)/1024/1024)
+        return "%1.2f TB" % (float(s) / 1024 / 1024 / 1024 / 1024)
+    elif s > 1024 * 1024 * 1024:
+        return "%1.2f GB" % (float(s) / 1024 / 1024 / 1024)
+    elif s > 1024 * 1024:
+        return "%1.2f MB" % (float(s) / 1024 / 1024)
     elif s > 1024:
-        return "%1.2f KB" % (float(s)/1024)
+        return "%1.2f KB" % (float(s) / 1024)
     else:
         return "%d B" % s
-

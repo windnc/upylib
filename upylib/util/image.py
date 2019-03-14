@@ -1,7 +1,9 @@
+import logging
+
+import piexif
 from PIL import Image
 from PIL import ImageFile
-import logging
-import piexif
+
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.ERROR)
 # logger.setLevel(logging.DEBUG)

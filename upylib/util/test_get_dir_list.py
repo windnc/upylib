@@ -2,11 +2,11 @@
 # -*- coding:utf-8 -*-⏎
 
 from __future__ import print_function
+
 from fs import *
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 def test():
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     root = "../"
     print(root)
     dinfo_list = get_dir_list(root)
@@ -18,8 +18,8 @@ def test():
     else:
         print("fail")
 
-    print( "test recursive")
-    root="../../"
+    print("test recursive")
+    root = "../../"
     dinfo_list = get_dir_list(root, recursive=True)
     if dinfo_list:
         for i, dinfo in enumerate(dinfo_list):
@@ -29,8 +29,8 @@ def test():
     else:
         print("fail")
 
-    print( "test sort")
-    dinfo_list = get_dir_list(root, recursive=True, ctx={ "sort": "dn", "order":"asc" })
+    print("test sort")
+    dinfo_list = get_dir_list(root, recursive=True, ctx={"sort": "dn", "order": "asc"})
     if dinfo_list:
         for i, dinfo in enumerate(dinfo_list):
             print(dinfo.full_dn)
@@ -39,6 +39,6 @@ def test():
     else:
         print("fail")
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-if __name__ == "__main__": test()
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
+if __name__ == "__main__":
+    test()

@@ -1,36 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-⏎
 from __future__ import print_function
-import sys
-import re
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-if sys.version_info<(3,0,0):
+import re
+import sys
+
+if sys.version_info < (3, 0, 0):
     reload(sys)
     sys.setdefaultencoding('utf8')
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 def regex_replace(s, patt, rep):
     res = re.search(patt, s)
     if res is None:
         return False
 
     s = rep
-    for i in range(1,9):
+    for i in range(1, 9):
         var = "${%d}" % i
         if var in s:
-            s = s.replace( var, res.group(i) )
+            s = s.replace(var, res.group(i))
 
     return s
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 def regex_match(s, patt):
     res = re.search(patt, s)
     if res is None:
         return False
     return True
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 def regex_extract(s, patt, i):
     res = re.search(patt, s)
     if res is None:
@@ -38,7 +38,7 @@ def regex_extract(s, patt, i):
 
     return res.group(i)
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 def test():
     """
     if len(sys.argv) != 3:
@@ -50,7 +50,7 @@ def test():
 
     patt = "/ba(.*)/"
     print(patt)
-    print( regex_match(s, patt) )
+    print(regex_match(s, patt))
 
     patt = "/(.*)(.*)"
     print(patt)
@@ -62,7 +62,6 @@ def test():
     res = regex_extract(s, patt, 2)
     print(res)
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
+
 if __name__ == "__main__":
     test()
-

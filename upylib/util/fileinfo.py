@@ -1,6 +1,7 @@
-import os
-import json
 import datetime
+import json
+import os
+
 from upylib.util.fs import is_image, is_text, is_music, is_movie
 
 
@@ -22,8 +23,8 @@ class FileInfo:
     def __init__(self, full_fn=None, path=None, fn=None):
         if full_fn:
             self.full_fn = full_fn
-            self.path = os.path.dirname( full_fn )
-            self.fn = os.path.basename( full_fn )
+            self.path = os.path.dirname(full_fn)
+            self.fn = os.path.basename(full_fn)
 
         else:
             self.full_fn = os.path.join(path, fn)
