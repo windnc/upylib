@@ -38,10 +38,13 @@ class FileInfo:
             e = e[1:]
         self.base = b
         self.ext = e
+
         self.cstamp = int(os.path.getctime(full_fn))
         self.mstamp = int(os.path.getmtime(full_fn))
+        self.astamp = int(os.path.getatime(full_fn))
         self.cstr = datetime.datetime.fromtimestamp(self.cstamp).strftime("%y.%m.%d %H:%M:%S")
         self.mstr = datetime.datetime.fromtimestamp(self.mstamp).strftime("%y.%m.%d %H:%M:%S")
+        self.astr = datetime.datetime.fromtimestamp(self.astamp).strftime("%y.%m.%d %H:%M:%S")
         self.size = os.path.getsize(full_fn)
         from upylib.util.fs import get_filesize_str
         self.size_str = get_filesize_str(self.size)
