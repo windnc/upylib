@@ -120,6 +120,10 @@ def get_file_list(root, recursive=False, ctx=None):
             fi_list.sort(key=lambda x: x.fn)
         elif ctx["sort"] == "cstamp":
             fi_list.sort(key=lambda x: x.cstamp)
+        elif ctx["sort"] == "mstamp":
+            fi_list.sort(key=lambda x: x.mstamp)
+        elif ctx["sort"] == "astamp":
+            fi_list.sort(key=lambda x: x.astamp)
         elif ctx["sort"] == "size":
             fi_list.sort(key=lambda x: x.size)
 
