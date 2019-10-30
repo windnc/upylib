@@ -50,8 +50,8 @@ class USQLite:
         return db_select_query(self.db_fn, sql, verbosity)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-    def update_query(self, sql, verbosity=1):
-        return db_update_query(self.db_fn, sql, verbosity)
+    def update_query(self, sql, data, verbosity=1):
+        return db_update_query(self.db_fn, sql, data, verbosity)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
     def insert_query(self, sql, data, verbosity=1):
@@ -85,7 +85,8 @@ if __name__ == '__main__':
         data = [1]
         udb.insert_query(sql, data)
 
-        sql = "UPDATE tbl SET id=3 WHERE id=1"
+        sql = "UPDATE tbl SET id=? WHERE id=?"
+        data = [3, 1]
         udb.update_query(sql, data)
 
         sql = "INSERT INTO tbl (id) VALUES (?);"

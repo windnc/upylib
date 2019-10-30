@@ -150,11 +150,11 @@ def db_delete_query(db_fn, sql, verbosity=1):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~8
-def db_update_query(db_fn, sql, verbosity=1):
+def db_update_query(db_fn, sql, data, verbosity=1):
     try:
         db = db_connect(db_fn)
         cur = db.cursor()
-        cur.execute(sql)
+        cur.execute(sql, data)
         db.commit()
 
     except Exception as e:
