@@ -3,6 +3,7 @@ import hashlib
 import logging
 import os
 import shutil
+import xattr
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -63,7 +64,59 @@ def is_text(fn):
         return False
 
 
-def check_filter(finfo, filter_dict):
+def xattr_set(fn, k, v, mode="force"):
+    if not is_file(fn):
+        return False
+
+    if mode == "force":
+        #print("force")
+        r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
+    elif mode == "immutable":
+        #print("immutable")
+        if xattr_get(fm, k) != None:
+            return False
+        else:
+            r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
+    else:
+        #print("error: unknown mode: %s" % mode)
+        return False
+
+    # check
+    r =  xattr_get(fn, k)
+    if r == v:
+        return True
+    else:
+        return False
+
+
+def xattr_get(fn, k):
+    if not is_file(fn):
+        return False
+
+    try:
+        r = xattr.get(fn, k, namespace=xattr.NS_USER)
+        r = r.decode("utf-8")
+    except Exception as e:
+        #print(e)
+        return None
+
+    return r
+
+
+def xattr_key_list(fn):
+    if not is_file(fn):
+        return False
+
+    try:
+        r = [i.decode("utf-8") for i in xattr.list(fn, namespace=xattr.NS_USER)]
+    except Exception as e:
+        #print(e)
+        return None
+
+    return r
+
+
+def _check_filter(finfo, filter_dict):
     if not filter_dict:
         return True
 
@@ -104,7 +157,7 @@ def get_file_list(root, recursive=False, ctx=None):
     for full_fn in full_fn_list:
         finfo = FileInfo(full_fn=full_fn)
         if ctx and "filter" in ctx:
-            if check_filter(finfo, ctx["filter"]):
+            if _check_filter(finfo, ctx["filter"]):
                 fi_list.append(finfo)
             else:
                 # filter
@@ -165,7 +218,7 @@ def get_dir_list(root, recursive=False, ctx=None):
     for full_dn in full_dn_list:
         dinfo = DirInfo(full_dn=full_dn)
         if ctx and "filter" in ctx:
-            if check_filter(dinfo, ctx["filter"]):
+            if _check_filter(dinfo, ctx["filter"]):
                 di_list.append(dinfo)
             else:
                 # filter
