@@ -103,6 +103,19 @@ def xattr_get(fn, k):
     return r
 
 
+def xattr_remove(fn, k):
+    if not is_file(fn):
+        return False
+
+    try:
+        r = xattr.remove(fn, k, namespace=xattr.NS_USER)
+    except Exception as e:
+        #print(e)
+        return None
+
+    return True
+
+
 def xattr_key_list(fn):
     if not is_file(fn):
         return False
