@@ -53,6 +53,9 @@ class FileInfo:
 
         return
 
+    def setmatime(self, mstamp):
+        os.utime(self.full_fn, (mstamp, mstamp))
+
     def is_image(self):
         return is_image(self.fn)
 
@@ -106,6 +109,9 @@ class DirInfo:
         self.is_valid = True
 
         return
+
+    def setmatime(self, mstamp):
+        os.utime(self.full_dn, (mstamp, mstamp))
 
     def jsonify(self):
         return json.dumps(self, default=lambda o: o.__dict__)
