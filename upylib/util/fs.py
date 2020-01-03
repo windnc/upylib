@@ -69,20 +69,20 @@ def xattr_set(fn, k, v, mode="force"):
         return False
 
     if mode == "force":
-        #print("force")
+        # print("force")
         r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
     elif mode == "immutable":
-        #print("immutable")
-        if xattr_get(fm, k) != None:
+        # print("immutable")
+        if xattr_get(fn, k) is not None:
             return False
         else:
             r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
     else:
-        #print("error: unknown mode: %s" % mode)
+        # print("error: unknown mode: %s" % mode)
         return False
 
     # check
-    r =  xattr_get(fn, k)
+    r = xattr_get(fn, k)
     if r == v:
         return True
     else:
@@ -97,7 +97,7 @@ def xattr_get(fn, k):
         r = xattr.get(fn, k, namespace=xattr.NS_USER)
         r = r.decode("utf-8")
     except Exception as e:
-        #print(e)
+        # print(e)
         return None
 
     return r
@@ -108,9 +108,9 @@ def xattr_remove(fn, k):
         return False
 
     try:
-        r = xattr.remove(fn, k, namespace=xattr.NS_USER)
+        xattr.remove(fn, k, namespace=xattr.NS_USER)
     except Exception as e:
-        #print(e)
+        # print(e)
         return None
 
     return True
@@ -123,7 +123,7 @@ def xattr_key_list(fn):
     try:
         r = [i.decode("utf-8") for i in xattr.list(fn, namespace=xattr.NS_USER)]
     except Exception as e:
-        #print(e)
+        # print(e)
         return list()
 
     return r
@@ -140,7 +140,7 @@ def _check_filter(finfo, filter_dict):
     return True
 
 
-def get_parent(root: str) -> str:
+def get_parent(root):
     if root == "/":
         return ""
     return os.path.abspath(os.path.join(root, os.pardir))
@@ -305,7 +305,7 @@ def del_file(fn):
     return True
 
 
-def assert_no_file(fn: str) -> bool:
+def assert_no_file(fn):
     logging.debug("assert no file %s" % fn)
 
     if is_file(fn):
@@ -353,6 +353,9 @@ def get_md5(fn):
 
 
 def get_filesize_str(s):
+    if not isinstance(s, int):
+        return "N/A"
+
     if s > 1024 * 1024 * 1024 * 1024:
         return "%1.2f TB" % (float(s) / 1024 / 1024 / 1024 / 1024)
     elif s > 1024 * 1024 * 1024:
