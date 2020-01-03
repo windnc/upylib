@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-⏎
+import sys
 from image import *
 
 
@@ -49,5 +50,12 @@ def test():
         print("no")
 
 
+def test_meta():
+    src_fn = sys.argv[1]
+    meta = get_meta(src_fn)
+    print(json.dumps(list(meta.keys()), indent=2))
+
+
 if __name__ == "__main__":
     test()
+    test_meta()

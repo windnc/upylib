@@ -1,4 +1,5 @@
 import logging
+import json
 
 import piexif
 from PIL import Image
@@ -12,7 +13,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 Image.warnings.simplefilter('error', Image.DecompressionBombWarning)
 
 
-def save_thumb(src_fn, dst_fn, size, rotate):
+def save_thumb(src_fn, dst_fn, size, rotate=True):
     # open
     try:
         img = Image.open(src_fn)
@@ -71,3 +72,29 @@ def save_thumb(src_fn, dst_fn, size, rotate):
         return False
 
     return True
+
+
+def get_meta(src_fn):
+    try:
+        img = Image.open(src_fn)
+    except FileNotFoundError:
+        logger.info("file not found")
+        return False
+    except Exception as e:
+        logger.info("image open fail: %s" % e)
+        return False
+
+    if "exif" not in img.info:
+        logger.info("no exif: %s" % e)
+        return False
+
+    exif_dict = piexif.load(img.info["exif"])
+    exif_dict.pop("thumbnail")
+    d = dict()
+    for k, v in exif_dict.items():
+        for k2, v2 in v.items():
+            tag_name = piexif.TAGS[k][k2]["name"]
+            if type(v2) == bytes:
+                v2 = v2.decode("utf-8")
+            d[tag_name] = v2
+    return d
