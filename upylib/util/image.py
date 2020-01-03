@@ -74,27 +74,38 @@ def save_thumb(src_fn, dst_fn, size, rotate=True):
     return True
 
 
-def get_meta(src_fn):
+def get_meta(src_fn, full=False):
     try:
         img = Image.open(src_fn)
     except FileNotFoundError:
-        logger.info("file not found")
+        logger.info("file not found: %s" % src_fn)
         return False
     except Exception as e:
         logger.info("image open fail: %s" % e)
         return False
 
     if "exif" not in img.info:
-        logger.info("no exif: %s" % e)
+        logger.info("no exif: %s" % src_fn)
         return False
 
+    target_tag_list = list()
+    target_tag_list.append("Make")
+    target_tag_list.append("Model")
+    target_tag_list.append("Orientation")
+    target_tag_list.append("DateTimeOriginal")
+    target_tag_list.append("GPSLatitude")
+    target_tag_list.append("GPSLongitude")
+    target_tag_list.append("PixelXDimension")
+    target_tag_list.append("PixelYDimension")
     exif_dict = piexif.load(img.info["exif"])
     exif_dict.pop("thumbnail")
     d = dict()
     for k, v in exif_dict.items():
         for k2, v2 in v.items():
             tag_name = piexif.TAGS[k][k2]["name"]
-            if type(v2) == bytes:
-                v2 = v2.decode("utf-8")
+            if not full and tag_name not in target_tag_list:
+                continue
+            # if type(v2) == bytes:
+            #    v2 = v2.decode("utf-8")
             d[tag_name] = v2
     return d

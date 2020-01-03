@@ -124,7 +124,7 @@ def xattr_key_list(fn):
         r = [i.decode("utf-8") for i in xattr.list(fn, namespace=xattr.NS_USER)]
     except Exception as e:
         #print(e)
-        return None
+        return list()
 
     return r
 
