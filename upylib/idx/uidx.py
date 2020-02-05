@@ -162,12 +162,9 @@ class UIdx:
             return False
 
         file_tag = "uidx_i_%s" % tag
-        #res = fs.xattr_set(full_fn, file_tag, val)
-        res = fs.xattr_get(full_fn, file_tag, default="hi")
-        print(res)
+        res = fs.xattr_set(full_fn, file_tag, val)
         if res:
             print("ok")
-
 
         return True
 
