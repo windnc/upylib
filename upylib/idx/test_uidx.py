@@ -36,6 +36,14 @@ def test_uidx_create():
 
     f3 = uidx.get_file(id=4)
     print(f3)
+
+    t = uidx.get_tag_dict(id=2)
+    print(t)
+
+    uidx.set_tag_int(id=2, tag="confirm", val=1)
+
+    t = uidx.get_tag_dict(id=2)
+    print(t)
     #uidx.get_file(path="
 
 

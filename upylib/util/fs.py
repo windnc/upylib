@@ -89,7 +89,7 @@ def xattr_set(fn, k, v, mode="force"):
         return False
 
 
-def xattr_get(fn, k):
+def xattr_get(fn, k, default=None):
     if not is_file(fn):
         return False
 
@@ -98,7 +98,7 @@ def xattr_get(fn, k):
         r = r.decode("utf-8")
     except Exception as e:
         # print(e)
-        return None
+        return default
 
     return r
 

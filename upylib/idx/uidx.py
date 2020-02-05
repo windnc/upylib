@@ -139,5 +139,39 @@ class UIdx:
             f[k] = res[0][k]
         return f
 
+    def get_tag_dict(self, id=None, path=None, fn=None):
+        f = self.get_file(id, path, fn)
+        if not f:
+            return f
+
+        tag_dict = dict()
+        for k, v in f.items():
+            if k.startswith("tag_"):
+                tag = k[len("tag_"):]
+                tag_dict[tag] = v
+        return tag_dict
+
+    def set_tag_int(self, id=None, path=None, fn=None, tag=None, val=None):
+        f = self.get_file(id, path, fn)
+        if not f:
+            return f
+
+        # tag file
+        full_fn = self.conf.root + f["path"] + f["fn"]
+        if not os.path.isfile(full_fn):
+            return False
+
+        file_tag = "uidx_i_%s" % tag
+        #res = fs.xattr_set(full_fn, file_tag, val)
+        res = fs.xattr_get(full_fn, file_tag, default="hi")
+        print(res)
+        if res:
+            print("ok")
+
+
+        return True
+
+
+
     def dump(self):
         print(self.conf)
