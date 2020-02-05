@@ -26,6 +26,17 @@ def test_uidx_create():
     uidx.dump()
 
     uidx.scan()
+    file_list = uidx.get_file_list(path="/")
+    print(file_list)
+    file_list = uidx.get_file_list(path="/dir1", recursive=True)
+    for f in file_list:
+        print(f["path"], f["fn"])
+        f2 = uidx.get_file(path=f["path"], fn=f["fn"])
+        print(f2)
+
+    f3 = uidx.get_file(id=4)
+    print(f3)
+    #uidx.get_file(path="
 
 
 if __name__ == "__main__":
