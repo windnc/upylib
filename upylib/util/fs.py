@@ -68,6 +68,7 @@ def xattr_set(fn, k, v, mode="force"):
     if not is_file(fn):
         return False
 
+    v = str(v)
     if mode == "force":
         # print("force")
         r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
