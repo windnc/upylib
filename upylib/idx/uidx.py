@@ -157,25 +157,40 @@ class UIdx:
             return f
 
         # tag file
-        full_fn = self.conf.root + f["path"] + f["fn"]
+        print("set")
+        full_fn = self.conf.root
+        if f["path"]:
+            full_fn = self.conf.root + f["path"]
+        full_fn = full_fn + f["fn"]
+        print("full: %s" % full_fn)
         if not os.path.isfile(full_fn):
             return False
 
-        file_tag = "uidx_tag"
+        file_tag = "uidx"
         prev = fs.xattr_get(full_fn, file_tag, default="")
-        print(prev)
+        print("prev: %s" % prev)
         if prev:
             tag_dict = json.loads(prev)
         else:
             tag_dict = dict()
         tag_dict[tag] = {'t': 'i', 'v': val}
-        print(json.dumps(tag_dict))
+        print("next: %s" % json.dumps(tag_dict))
 
+        print(full_fn)
+        print(file_tag)
         res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
         if not res:
             return False
 
-        if not self.assert_tag_db_column(tag, "INTEGER"):
+        column_name = "uidx_i_%s" % tag
+        print(column_name)
+        if not self.db.assert_column("file", column_name, "INTEGER"):
+            return False
+
+        sql = "UPDATE file SET %s = ? WHERE id = ?;" % column_name
+        data = (val, f["id"])
+        res = self.db.update_query(sql, data)
+        if not res:
             return False
 
         return True

@@ -12,7 +12,7 @@ def test_uidx():
 
 def test_uidx_create():
     dn = "tmp_out"
-    root = "/home/windnc/data/test"
+    root = "/tmp/tmp-uidx"
     recursive = True
     exclude_list = list()
     exclude_list.append("*.o")
@@ -27,24 +27,28 @@ def test_uidx_create():
 
     uidx.scan()
     file_list = uidx.get_file_list(path="/")
-    print(file_list)
+    assert file_list
+
     file_list = uidx.get_file_list(path="/dir1", recursive=True)
+    assert file_list
+
     for f in file_list:
         print(f["path"], f["fn"])
         f2 = uidx.get_file(path=f["path"], fn=f["fn"])
         print(f2)
+        assert uidx.set_tag_int(id=f2["id"], tag="confirm", val=1)
 
+    """
     f3 = uidx.get_file(id=4)
     print(f3)
 
-    t = uidx.get_tag_dict(id=2)
+    t = uidx.get_tag_dict(id=4)
     print(t)
 
-    uidx.set_tag_int(id=2, tag="confirm", val=1)
 
-    t = uidx.get_tag_dict(id=2)
+    t = uidx.get_tag_dict(id=3)
     print(t)
-    #uidx.get_file(path="
+    """
 
 
 if __name__ == "__main__":

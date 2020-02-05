@@ -1,2 +1,2 @@
-sudo pip3 uninstall upylib
+sudo python3 -m pip uninstall upylib
 
