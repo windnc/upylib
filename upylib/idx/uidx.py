@@ -1,4 +1,5 @@
 import os
+import json
 from upylib.util import fs
 from upylib.db.usqlite import USQLite
 
@@ -57,14 +58,14 @@ class UIdx:
         self.load_db()
         return True
 
-    def assert_tag_db_schema(self, fi_list):
+    def assert_tag_db_column(self, fi_list):
         tag_list = list()
         for fi in fi_list:
             tag_val = fs.xattr_get(fi.full_fn, "uidx_tag")
             if tag_val:
                 print(tag_val)
-        tag_list.append("i_confirmm")
-        tag_list.append("s_title")
+        tag_list.append("udix_i_confirmm")
+        tag_list.append("uidx_s_title")
 
         for tag in tag_list:
             t, tag_name = tag.split("_", 1)
@@ -79,7 +80,7 @@ class UIdx:
         self.fi_list = list()
         self.reset_db()
         fi_list = fs.get_file_list(root=self.conf.root, recursive=self.conf.recursive)
-        self.assert_tag_db_schema(fi_list)
+        self.assert_tag_db_column(fi_list)
 
         data_list = list()
         for fi in fi_list:
@@ -121,7 +122,6 @@ class UIdx:
             file_list.append(f)
         return file_list
 
-
     def get_file(self, id=None, path=None, fn=None):
         if id:
             sql = "SELECT * FROM file WHERE id='%d';" % id
@@ -161,14 +161,24 @@ class UIdx:
         if not os.path.isfile(full_fn):
             return False
 
-        file_tag = "uidx_i_%s" % tag
-        res = fs.xattr_set(full_fn, file_tag, val)
-        if res:
-            print("ok")
+        file_tag = "uidx_tag"
+        prev = fs.xattr_get(full_fn, file_tag, default="")
+        print(prev)
+        if prev:
+            tag_dict = json.loads(prev)
+        else:
+            tag_dict = dict()
+        tag_dict[tag] = {'t': 'i', 'v': val}
+        print(json.dumps(tag_dict))
+
+        res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
+        if not res:
+            return False
+
+        if not self.assert_tag_db_column(tag, "INTEGER"):
+            return False
 
         return True
-
-
 
     def dump(self):
         print(self.conf)
