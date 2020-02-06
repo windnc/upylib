@@ -139,6 +139,24 @@ class UIdx:
             f[k] = res[0][k]
         return f
 
+    def search(self, where_sql):
+        if not where_sql:
+            return False
+
+        sql = "SELECT * FROM file WHERE %s" % where_sql
+        res = self.db.select_query(sql)
+        if not res:
+            return False
+
+        file_list = list()
+        for row in res:
+            f = dict()
+            for k in row.keys():
+                f[k] = row[k]
+            f["full_fn"] = self.conf.root + f["path"] + f["fn"]
+            file_list.append(f)
+        return file_list
+
     def get_tag_dict(self, id=None, path=None, fn=None):
         f = self.get_file(id, path, fn)
         if not f:
