@@ -175,33 +175,26 @@ class UIdx:
             return f
 
         # tag file
-        print("set")
         full_fn = self.conf.root
         if f["path"]:
             full_fn = self.conf.root + f["path"]
         full_fn = full_fn + f["fn"]
-        print("full: %s" % full_fn)
         if not os.path.isfile(full_fn):
             return False
 
         file_tag = "uidx"
         prev = fs.xattr_get(full_fn, file_tag, default="")
-        print("prev: %s" % prev)
         if prev:
             tag_dict = json.loads(prev)
         else:
             tag_dict = dict()
         tag_dict[tag] = {'t': 'i', 'v': val}
-        print("next: %s" % json.dumps(tag_dict))
 
-        print(full_fn)
-        print(file_tag)
         res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
         if not res:
             return False
 
         column_name = "uidx_i_%s" % tag
-        print(column_name)
         if not self.db.assert_column("file", column_name, "INTEGER"):
             return False
 
