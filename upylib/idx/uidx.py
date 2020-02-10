@@ -220,12 +220,12 @@ class UIdx:
             return f
 
         # tag file
-        print("set")
-        full_fn = self.conf.root
+        #print("set")
+        full_fn = self.conf["root"]
         if f["path"]:
-            full_fn = self.conf.root + f["path"]
+            full_fn = self.conf["root"] + f["path"]
         full_fn = full_fn + f["fn"]
-        print("full: %s" % full_fn)
+        #print("full: %s" % full_fn)
         if not os.path.isfile(full_fn):
             return False
 
@@ -239,15 +239,55 @@ class UIdx:
         tag_dict[tag] = {'t': 'i', 'v': val}
         print("next: %s" % json.dumps(tag_dict))
 
-        print(full_fn)
-        print(file_tag)
         res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
         if not res:
             return False
 
         column_name = "uidx_i_%s" % tag
-        print(column_name)
+        #print(column_name)
         if not self.db.assert_column("file", column_name, "INTEGER"):
+            return False
+
+        sql = "UPDATE file SET %s = ? WHERE id = ?;" % column_name
+        data = (val, f["id"])
+        res = self.db.update_query(sql, data)
+        if not res:
+            return False
+
+        return True
+
+    def set_tag_str(self, id=None, path=None, fn=None, tag=None, val=None):
+        f = self.get_file(id, path, fn)
+        if not f:
+            return f
+
+        # tag file
+        #print("set")
+        full_fn = self.conf["root"]
+        if f["path"]:
+            full_fn = self.conf["root"] + f["path"]
+        full_fn = full_fn + f["fn"]
+        #print("full: %s" % full_fn)
+        if not os.path.isfile(full_fn):
+            return False
+
+        file_tag = "uidx"
+        prev = fs.xattr_get(full_fn, file_tag, default="")
+        print("prev: %s" % prev)
+        if prev:
+            tag_dict = json.loads(prev)
+        else:
+            tag_dict = dict()
+        tag_dict[tag] = {'t': 's', 'v': val}
+        print("next: %s" % json.dumps(tag_dict))
+
+        res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
+        if not res:
+            return False
+
+        column_name = "uidx_s_%s" % tag
+        #print(column_name)
+        if not self.db.assert_column("file", column_name, "TEXT"):
             return False
 
         sql = "UPDATE file SET %s = ? WHERE id = ?;" % column_name

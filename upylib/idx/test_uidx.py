@@ -15,10 +15,8 @@ def test_uidx_create():
     # uidx.dump()
 
     uidx.scan()
-    return True
     file_list = uidx.get_file_list(path="/")
     assert file_list
-    return True
 
     file_list = uidx.get_file_list(path="/d1", recursive=True)
     assert file_list
@@ -27,19 +25,8 @@ def test_uidx_create():
         print(f["path"], f["fn"])
         f2 = uidx.get_file(path=f["path"], fn=f["fn"])
         print(f2)
-        assert uidx.set_tag_int(id=f2["id"], tag="confirm", val=1)
-
-    """
-    f3 = uidx.get_file(id=4)
-    print(f3)
-
-    t = uidx.get_tag_dict(id=4)
-    print(t)
-
-
-    t = uidx.get_tag_dict(id=3)
-    print(t)
-    """
+        assert uidx.set_tag_int(id=f2["id"], tag="test_int", val=8)
+        assert uidx.set_tag_str(id=f2["id"], tag="test_str", val="ok")
 
 
 if __name__ == "__main__":
