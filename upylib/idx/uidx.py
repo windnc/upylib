@@ -139,11 +139,16 @@ class UIdx:
             f[k] = res[0][k]
         return f
 
-    def search(self, where_sql):
+    def search(self, where_sql, order_sql, limit_sql):
         if not where_sql:
             return False
 
         sql = "SELECT * FROM file WHERE %s" % where_sql
+        if order_sql:
+            sql = sql + " " + order_sql
+        if limit_sql:
+            sql = sql + " " + limit_sql
+
         res = self.db.select_query(sql)
         if not res:
             return False
