@@ -231,13 +231,11 @@ class UIdx:
 
         file_tag = "uidx"
         prev = fs.xattr_get(full_fn, file_tag, default="")
-        print("prev: %s" % prev)
         if prev:
             tag_dict = json.loads(prev)
         else:
             tag_dict = dict()
         tag_dict[tag] = {'t': 'i', 'v': val}
-        print("next: %s" % json.dumps(tag_dict))
 
         res = fs.xattr_set(full_fn, file_tag, json.dumps(tag_dict))
         if not res:
