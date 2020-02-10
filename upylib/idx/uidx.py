@@ -203,7 +203,7 @@ class UIdx:
             f = dict()
             for k in row.keys():
                 f[k] = row[k]
-            f["full_fn"] = self.conf.root + f["path"] + f["fn"]
+            f["full_fn"] = self.conf["root"] + f["path"] + f["fn"]
             file_list.append(f)
         return file_list
 
