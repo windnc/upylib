@@ -1,0 +1,60 @@
+{
+	"dn": "tmp_out",
+	"root": "tmp_data",
+	"recursive": true,
+	"column_list": [
+		{
+			"name": "date",
+			"type": "TEXT",
+			"default": "",
+			"parse_list": [
+				{
+					"field": "fn",
+					"patt": "(\\d{8})_(\\d{6})",
+					"rep": "${1} ${2}"
+				},
+				{
+					"field": "fn",
+					"patt": "(\\d{6})",
+					"rep": "20${1} 000000"
+				}
+			]
+		},
+		{
+			"name": "season",
+			"type": "INTEGER",
+			"default": -9,
+			"parse_list": [
+				{
+					"field": "fn",
+					"patt": "S(\\d{1}).",
+					"rep": "${1}"
+				}
+			]
+		},
+		{
+			"name": "episode",
+			"type": "INTEGER",
+			"default": -9,
+			"parse_list": [
+				{
+					"field": "fn",
+					"patt": "E(\\d{1,3}).",
+					"rep": "${1}"
+				}
+			]
+		},
+		{
+			"name": "genre",
+			"type": "TEXT",
+			"default": "",
+			"parse_list": [
+				{
+					"field": "path",
+					"patt": "(comedy)",
+					"rep": "${1}"
+				}
+			]
+		}
+	]
+}
