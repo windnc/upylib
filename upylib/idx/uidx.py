@@ -1,44 +1,30 @@
 import os
 import json
 from upylib.util import fs
+from upylib.util import regex
 from upylib.db.usqlite import USQLite
 
 
-class UIdxConf:
-    def __init__(self):
-        self.dn = None
-        self.root = None
-        self.recursive = False
-        self.exclude_list = list()
-        pass
-
-    def setup(self, dn, root, recursive, exclude_list):
-        self.dn = dn
-        self.root = root
-        self.recursive = recursive
-        self.exclude_list = list(exclude_list)
-
-    def dump(self):
-        print("dn: %s" % self.dn)
-        print("root: %s" % self.root)
-        print("recursive: %s" % self.recursive)
-        print("exclude_list: %s" % self.exclude_list)
-
-
 class UIdx:
-    def __init__(self):
-        self.conf = None
-        self.fi_list = None
-        self.db = None
+    def __init__(self, conf_fn):
+        self.conf_fn = conf_fn
+        self.load()
 
-    def load(self, conf):
-        self.conf = conf
-        self.load_db()
+    def load(self):
+        if not os.path.isfile(self.conf_fn):
+            return False
+
+        with open(self.conf_fn, "r") as f:
+            self.conf = json.load(f)
+
+        if not self.load_db():
+            return False
+
         return True
 
     def load_db(self):
-        os.makedirs(self.conf.dn, exist_ok=True)
-        self.db = USQLite(self.conf.dn + "/uidx.db")
+        os.makedirs(self.conf["dn"], exist_ok=True)
+        self.db = USQLite(self.conf["dn"] + "/uidx.db")
         sql = """
         CREATE TABLE IF NOT EXISTS file (
             id INTEGER PRIMARY KEY, 
@@ -51,6 +37,11 @@ class UIdx:
             size INTEGER NOT NULL
         );""".strip()
         self.db.create_table(sql)
+
+        for column in self.conf["column_list"]:
+            self.db.assert_column("file", column["name"], column["type"])
+            #print(column)
+
         return True
 
     def reset_db(self):
@@ -79,22 +70,76 @@ class UIdx:
     def scan(self):
         self.fi_list = list()
         self.reset_db()
-        fi_list = fs.get_file_list(root=self.conf.root, recursive=self.conf.recursive)
+        fi_list = fs.get_file_list(root=self.conf["root"], recursive=self.conf["recursive"])
         self.assert_tag_db_column(fi_list)
+
+
+        vlist = list()
+        clist = list()
+        vlist.append("path")
+        clist.append("?")
+        vlist.append("fn")
+        clist.append("?")
+        vlist.append("ext")
+        clist.append("?")
+        vlist.append("cstamp")
+        clist.append("?")
+        vlist.append("mstamp")
+        clist.append("?")
+        vlist.append("astamp")
+        clist.append("?")
+        vlist.append("size")
+        clist.append("?")
+        for column in self.conf["column_list"]:
+            vlist.append(column["name"])
+            clist.append("?")
 
         data_list = list()
         for fi in fi_list:
-            rel_path = fi.path[len(self.conf.root):].strip("/")
+            rel_path = fi.path[len(self.conf["root"]):].strip("/")
             if rel_path:
                 rel_path = "/" + rel_path + "/"
-            data_list.append((rel_path, fi.fn, fi.ext, fi.cstamp, fi.mstamp, fi.astamp, fi.size))
-            #print(fi)
+
+
+            data = list()
+            data.append(rel_path)
+            data.append(fi.fn)
+            data.append(fi.ext)
+            data.append(fi.cstamp)
+            data.append(fi.mstamp)
+            data.append(fi.astamp)
+            data.append(fi.size)
+
+
+            for column in self.conf["column_list"]:
+                #print(column["name"])
+                found = False
+                for parse in column["parse_list"]:
+                    #print("\t", parse)
+                    if parse["field"] == "fn":
+                        src = fi.fn
+                    elif parse["field"] == "path":
+                        src = rel_path
+                    else:
+                        src = None
+
+                    if regex.regex_match(src, parse["patt"]):
+                        rep = regex.regex_replace(src, parse["patt"], parse["rep"])
+                        #print(rep)
+                        data.append(rep)
+                        #print("match")
+                        found = True
+                        break
+
+                if not found:
+                    data.append(column["default"])
+
+            data_list.append(data)
+        #print(vlist)
         #print(data_list)
 
         if data_list:
-            sql = """
-            INSERT INTO file (path, fn, ext, cstamp, mstamp, astamp, size)
-            VALUES (?,?,?,?,?,?,?);"""
+            sql = "INSERT INTO file (%s) VALUES (%s);" % (",".join(vlist), ",".join(clist))
             res = self.db.insert_query_many(sql, data_list)
             if not res:
                 return False
@@ -214,4 +259,4 @@ class UIdx:
         return True
 
     def dump(self):
-        print(self.conf)
+        print(json.dumps(self.conf, ensure_ascii=False, indent=2))

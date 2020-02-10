@@ -1,35 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from upylib.idx.uidx import UIdx, UIdxConf
+import json
+from upylib.idx.uidx import UIdx
 
 
 def test_uidx():
-    uidx = UIdx()
-    #uidx.load(uidxconf)
-    #uidx.dump()
+    uidx = UIdx(conf_fn="test.json")
 
 
 def test_uidx_create():
-    dn = "tmp_out"
-    root = "/tmp/tmp-uidx"
-    recursive = True
-    exclude_list = list()
-    exclude_list.append("*.o")
-
-    uidxconf = UIdxConf()
-    uidxconf.setup(dn=dn, root=root, recursive=True, exclude_list=exclude_list)
-    uidxconf.dump()
-
-    uidx = UIdx()
-    uidx.load(uidxconf)
-    uidx.dump()
+    uidx = UIdx(conf_fn="test.json")
+    uidx.reset_db()
+    # uidx.dump()
 
     uidx.scan()
+    return True
     file_list = uidx.get_file_list(path="/")
     assert file_list
+    return True
 
-    file_list = uidx.get_file_list(path="/dir1", recursive=True)
+    file_list = uidx.get_file_list(path="/d1", recursive=True)
     assert file_list
 
     for f in file_list:
