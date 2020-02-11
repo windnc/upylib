@@ -352,6 +352,13 @@ def get_md5(fn):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+def copy_time(src, tgt):
+    if not os.path.isfile(src) or not os.path.isfile(tgt):
+        return False
+    mstamp = os.path.getmtime(src)
+    os.utime(tgt, (mstamp, mstamp))
+    return True
+
 
 def get_filesize_str(s):
     if not isinstance(s, int):
