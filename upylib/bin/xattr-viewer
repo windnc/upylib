@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 ap = ArgumentParser(description="A CLI tool for exteded attribute")
 ap.add_argument("-r", "--root", action="store", dest="root_dn", help="root directory path", required=True)
 ap.add_argument("-a", "--all", action="store_true", dest="all", help="show all files", required=False, default=False)
+ap.add_argument("-u", "--uidx", action="store_true", dest="uidx", help="exclude uidx", required=False, default=False)
 args = ap.parse_args()
 
 
@@ -16,6 +17,9 @@ def run():
         fi_list = fs.get_file_list(root=args.root_dn, recursive=True)
         for fi in fi_list:
             xattr_key_list = fs.xattr_key_list(fi.full_fn)
+            if not args.uidx:
+                if xattr_key_list:
+                    xattr_key_list = [k for k in xattr_key_list if k != "uidx"]
 
             if args.all or xattr_key_list:
                 print("src: %s" % fi.full_fn)
