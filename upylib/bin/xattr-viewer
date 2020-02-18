@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+import sys
+import json
+from upylib.util import fs
+from argparse import ArgumentParser
+
+ap = ArgumentParser(description="A CLI tool for exteded attribute")
+ap.add_argument("-r", "--root", action="store", dest="root_dn", help="root directory path", required=True)
+ap.add_argument("-a", "--all", action="store_true", dest="all", help="show all files", required=False, default=False)
+args = ap.parse_args()
+
+
+
+def run():
+    try:
+        fi_list = fs.get_file_list(root=args.root_dn, recursive=True)
+        for fi in fi_list:
+            xattr_key_list = fs.xattr_key_list(fi.full_fn)
+
+            if args.all or xattr_key_list:
+                print("src: %s" % fi.full_fn)
+
+            if xattr_key_list:
+                for k in xattr_key_list:
+                    print("    [%s]: [%s]" % (k, fs.xattr_get(fi.full_fn, k)))
+
+
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    run()
+
+
+
