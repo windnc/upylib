@@ -70,9 +70,13 @@ class UIdx:
     def scan(self):
         self.fi_list = list()
         self.reset_db()
-        fi_list = fs.get_file_list(root=self.conf["root"], recursive=self.conf["recursive"])
-        self.assert_tag_db_column(fi_list)
+        try:
+            fi_list = fs.get_file_list(root=self.conf["root"], recursive=self.conf["recursive"])
+        except Exception as e:
+            print("error: %s %s" % (e, self.conf["root"]))
+            return False
 
+        self.assert_tag_db_column(fi_list)
 
         vlist = list()
         clist = list()
@@ -100,7 +104,6 @@ class UIdx:
             if rel_path:
                 rel_path = "/" + rel_path + "/"
 
-
             data = list()
             data.append(rel_path)
             data.append(fi.fn)
@@ -109,7 +112,6 @@ class UIdx:
             data.append(fi.mstamp)
             data.append(fi.astamp)
             data.append(fi.size)
-
 
             for column in self.conf["column_list"]:
                 #print(column["name"])
