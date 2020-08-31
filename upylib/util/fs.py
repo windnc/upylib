@@ -352,6 +352,13 @@ def get_md5(fn):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+
+def get_md5_str(s):
+    hash_md5 = hashlib.md5()
+    hash_md5.update(s)
+    return hash_md5.hexdigest()
+
+
 def copy_time(src, tgt):
     if not os.path.isfile(src) or not os.path.isfile(tgt):
         return False
