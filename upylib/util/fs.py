@@ -355,7 +355,7 @@ def get_md5(fn):
 
 def get_md5_str(s):
     hash_md5 = hashlib.md5()
-    hash_md5.update(s)
+    hash_md5.update(s.encode("utf-8"))
     return hash_md5.hexdigest()
 
 
