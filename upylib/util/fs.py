@@ -68,6 +68,7 @@ def xattr_set(fn, k, v, mode="force"):
     if not is_file(fn):
         return False
 
+    v = str(v)
     if mode == "force":
         # print("force")
         r = xattr.set(fn, k, v, namespace=xattr.NS_USER)
@@ -89,7 +90,7 @@ def xattr_set(fn, k, v, mode="force"):
         return False
 
 
-def xattr_get(fn, k):
+def xattr_get(fn, k, default=None):
     if not is_file(fn):
         return False
 
@@ -98,7 +99,7 @@ def xattr_get(fn, k):
         r = r.decode("utf-8")
     except Exception as e:
         # print(e)
-        return None
+        return default
 
     return r
 
@@ -350,6 +351,20 @@ def get_md5(fn):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
+
+
+def get_md5_str(s):
+    hash_md5 = hashlib.md5()
+    hash_md5.update(s.encode("utf-8"))
+    return hash_md5.hexdigest()
+
+
+def copy_time(src, tgt):
+    if not os.path.isfile(src) or not os.path.isfile(tgt):
+        return False
+    mstamp = os.path.getmtime(src)
+    os.utime(tgt, (mstamp, mstamp))
+    return True
 
 
 def get_filesize_str(s):
