@@ -68,7 +68,7 @@ def urlenc(q):
 
 
 class CachedWeb:
-    def __init__(self, cache_dir="./cachedweb", rebuild=False):
+    def __init__(self, cache_dir="./.cachedweb", rebuild=False):
         self.loaded = False
         self.db_fn = os.path.join(cache_dir, "url_content.db")
 
