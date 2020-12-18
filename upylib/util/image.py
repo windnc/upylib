@@ -5,7 +5,8 @@ import piexif
 from PIL import Image
 from PIL import ImageFile
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
+#print(__name__)
 # logger.setLevel(logging.ERROR)
 # logger.setLevel(logging.DEBUG)
 
@@ -14,14 +15,15 @@ Image.warnings.simplefilter('error', Image.DecompressionBombWarning)
 
 
 def save_thumb(src_fn, dst_fn, size, rotate=True):
+    logger.info("image : %s %s" % (src_fn, dst_fn))
     # open
     try:
         img = Image.open(src_fn)
     except FileNotFoundError:
-        logger.info("file not found")
+        logger.error("file not found")
         return False
     except Exception as e:
-        logger.info("image open fail: %s" % e)
+        logger.error("image open fail: %s" % e)
         return False
 
     # rotate based on exif
@@ -54,7 +56,7 @@ def save_thumb(src_fn, dst_fn, size, rotate=True):
     try:
         img = img.convert("RGB")
     except Exception as e:
-        logger.info("convert RGB fail: %s" % e)
+        logger.warning("convert RGB fail: %s" % e)
         pass
 
     # save
@@ -64,11 +66,10 @@ def save_thumb(src_fn, dst_fn, size, rotate=True):
             logger.debug("save. exif ok")
             img.save(dst_fn, "JPEG", exif=exif_bytes)
         else:
-            logger.debug("no save due to no exif: %s" % src_fn)
-            # img.save(dst_fn, "JPEG")
-            return False
+            logger.debug("save. no exif: %s" % src_fn)
+            img.save(dst_fn, "JPEG")
     except Exception as e:
-        logger.info("save fail: %s" % e)
+        logger.error("save fail: %s" % e)
         return False
 
     return True
