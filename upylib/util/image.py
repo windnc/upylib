@@ -3,6 +3,7 @@ import json
 
 import piexif
 from PIL import Image
+from PIL import ImageOps
 from PIL import ImageFile
 
 logger = logging.getLogger()
@@ -14,7 +15,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 Image.warnings.simplefilter('error', Image.DecompressionBombWarning)
 
 
-def save_thumb(src_fn, dst_fn, size, rotate=True):
+def save_thumb(src_fn, dst_fn, size_opt, rotate=True):
     logger.info("image : %s %s" % (src_fn, dst_fn))
     # open
     try:
@@ -60,8 +61,16 @@ def save_thumb(src_fn, dst_fn, size, rotate=True):
         pass
 
     # save
-    try:
+    size, mode = (size_opt[0], size_opt[1]), size_opt[2]
+    logger.debug("mode:%d" % mode)
+    if mode == 0:
         img.thumbnail(size, Image.ANTIALIAS)
+    elif mode == 1:
+        img = ImageOps.fit(img, size, Image.ANTIALIAS)
+    else:
+        img.thumbnail(size, Image.ANTIALIAS)
+
+    try:
         if exif_bytes:
             logger.debug("save. exif ok")
             img.save(dst_fn, "JPEG", exif=exif_bytes)
