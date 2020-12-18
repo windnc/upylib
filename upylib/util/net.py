@@ -124,6 +124,24 @@ class CachedWeb:
             print(repr(e))
             return False
 
+    def delete(self, url):
+        if not self.loaded:
+            return False
+
+        sql = "DELETE FROM url_content WHERE url=?;"
+        try:
+            cur = self.db.cursor()
+            cur.execute(sql, [url])
+            self.db.commit()
+            return True
+        except sqlite3.IntegrityError as e:
+            print(e)
+            return False
+        except Exception as e:
+            print(repr(e))
+            return False
+
+
     def search(self, url):
         if not self.loaded:
             return False
