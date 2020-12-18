@@ -134,10 +134,19 @@ def _check_filter(finfo, filter_dict):
     if not filter_dict:
         return True
 
-    if "ext" in filter_dict:
-        if finfo.ext.lower() != filter_dict["ext"].lower():
-            return False
-
+    if "exclude" in filter_dict:
+        if "ext_list" in filter_dict["exclude"]:
+            for ext in filter_dict["exclude"]["ext_list"]:
+                if finfo.ext.lower() == ext.lower():
+                    return False
+        if "fn_patt_list" in filter_dict["exclude"]:
+            for fn_patt in filter_dict["exclude"]["fn_patt_list"]:
+                if fn_patt in finfo.fn:
+                    return False
+        if "path_patt_list" in filter_dict["exclude"]:
+            for path_patt in filter_dict["exclude"]["path_patt_list"]:
+                if path_patt in finfo.path:
+                    return False
     return True
 
 
@@ -170,14 +179,10 @@ def get_file_list(root, recursive=False, ctx=None):
     fi_list = list()
     for full_fn in full_fn_list:
         finfo = FileInfo(full_fn=full_fn)
-        if ctx and "filter" in ctx:
-            if _check_filter(finfo, ctx["filter"]):
-                fi_list.append(finfo)
-            else:
-                # filter
-                pass
-        else:
+        if _check_filter(finfo, ctx):
             fi_list.append(finfo)
+        else:
+            pass
 
     # sort
     if ctx and "sort" in ctx:
