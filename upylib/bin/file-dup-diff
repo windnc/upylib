@@ -35,11 +35,11 @@ def load_root(root):
 
         file_list = list()
         tmp_list = fs.get_file_list(real_dn, recursive=True)
-        if not tmp_list:
-            continue
 
         total_size = 0
         for fn in tmp_list:
+            if fn.fn.startswith("._") or fn.fn == ".DS_Store":
+                continue
             file_list.append((fn.fn, fn.size))
             total_size += fn.size
 
