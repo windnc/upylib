@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+import random
+import sys
+import os
+import json
+from upylib.util import fs
+import shutil
+
+
+def load_param():
+    if len(sys.argv) != 4:
+        print(f"usage: {sys.argv[0]} inspect-root ref-root report-fn")
+        return False
+    else:
+        return sys.argv[1].rstrip("/"), sys.argv[2].rstrip("/"), sys.argv[3]
+
+
+
+
+def dup_file(root, summary_fn):
+    file_list = [json.loads(line) for line in open(summary_fn)]
+    fo = open(summary_fn.replace(".txt", ".dup.txt"), "w")
+    fo_dup_pl = open(summary_fn.replace(".txt", ".dup.pvpl"), "w")
+
+    while True:
+        if not file_list:
+            break
+
+        #print(len(file_list))
+        size_0 = file_list[0]["size"]
+        size_0_str = file_list[0]["size_str"]
+        for i in range(1, len(file_list)):
+            if file_list[i]["size"] != size_0:
+                break
+
+        if i >= 2:
+            print(size_0, size_0_str, i, file=fo)
+            #print(size_0, size_0_str, i)
+            for fi in file_list[0:i]:
+                #md5 = fs.get_md5(fi["full_fn"])
+                print(fi["full_fn"], flush=True, file=fo)
+                #print(fi["full_fn"], flush=True)
+                #if fs.is_movie(fi["fn"]) or fs.is_image(fi["fn"]):
+                if fs.is_movie(fi["fn"]):
+                    print(fi["full_fn"][len(root)+1:], flush=True, file=fo_dup_pl)
+
+        file_list = file_list[i:]
+    fo.close()
+    fo_dup_pl.close()
+    return True
+
+
+def load_root(root):
+    tmp_list = fs.get_dir_list(root, recursive=True)
+    if tmp_list:
+        dir_list = ["/"]
+        for di in tmp_list:
+            dir_list.append(di.full_dn[len(root):])
+    else:
+        dir_list = ["/"]
+    # print(dir_list)
+
+    file_dict = dict()
+    for dn in dir_list:
+
+        if dn == "/":
+            real_dn = root
+        else:
+            real_dn = root + dn
+
+        file_list = list()
+        tmp_list = fs.get_file_list(real_dn, recursive=True)
+        total_size = 0
+        for fn in tmp_list:
+            file_list.append((fn.fn, fn.size))
+            total_size += fn.size
+
+        file_dict[dn] = dict()
+        file_dict[dn]["files"] = file_list
+        file_dict[dn]["size"] = total_size
+        file_dict[dn]["just_dn"] = dn.strip("/")[:-1]
+
+    # for dn, finfo in file_dict.items():
+    #     print(dn, finfo)
+    return file_dict
+
+
+def dup(inspect_root, ref_root, summary_fn):
+    inspect = load_root(inspect_root)
+    ref = load_root(ref_root)
+
+    fo = open(summary_fn, "w")
+    for dn, file_dict in inspect.items():
+        for ref_dn, ref_file_dict in ref.items():
+            if file_dict["size"] == ref_file_dict["size"]:
+                print("match")
+                print("match", file=fo)
+                print((inspect_root + dn).rstrip("/"), len(file_dict["files"]), file_dict["size"], file=fo)
+                print((ref_root + ref_dn).rstrip("/"), len(ref_file_dict["files"]), ref_file_dict["size"], file=fo)
+                break
+        else:
+            print("unmatch: ", end="", file=fo)
+            print(inspect_root + dn, file=fo)
+    fo.close()
+    return
+
+
+def run():
+    res = load_param()
+    if not res:
+        return False
+    inspect_root, ref_root, summary_fn = res
+    print("inspect:", inspect_root)
+    print("ref:", ref_root)
+    dup(inspect_root, ref_root, summary_fn)
+
+
+if __name__ == "__main__":
+    run()
