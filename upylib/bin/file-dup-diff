@@ -15,41 +15,6 @@ def load_param():
         return sys.argv[1].rstrip("/"), sys.argv[2].rstrip("/"), sys.argv[3]
 
 
-
-
-def dup_file(root, summary_fn):
-    file_list = [json.loads(line) for line in open(summary_fn)]
-    fo = open(summary_fn.replace(".txt", ".dup.txt"), "w")
-    fo_dup_pl = open(summary_fn.replace(".txt", ".dup.pvpl"), "w")
-
-    while True:
-        if not file_list:
-            break
-
-        #print(len(file_list))
-        size_0 = file_list[0]["size"]
-        size_0_str = file_list[0]["size_str"]
-        for i in range(1, len(file_list)):
-            if file_list[i]["size"] != size_0:
-                break
-
-        if i >= 2:
-            print(size_0, size_0_str, i, file=fo)
-            #print(size_0, size_0_str, i)
-            for fi in file_list[0:i]:
-                #md5 = fs.get_md5(fi["full_fn"])
-                print(fi["full_fn"], flush=True, file=fo)
-                #print(fi["full_fn"], flush=True)
-                #if fs.is_movie(fi["fn"]) or fs.is_image(fi["fn"]):
-                if fs.is_movie(fi["fn"]):
-                    print(fi["full_fn"][len(root)+1:], flush=True, file=fo_dup_pl)
-
-        file_list = file_list[i:]
-    fo.close()
-    fo_dup_pl.close()
-    return True
-
-
 def load_root(root):
     tmp_list = fs.get_dir_list(root, recursive=True)
     if tmp_list:
@@ -70,6 +35,9 @@ def load_root(root):
 
         file_list = list()
         tmp_list = fs.get_file_list(real_dn, recursive=True)
+        if not tmp_list:
+            continue
+
         total_size = 0
         for fn in tmp_list:
             file_list.append((fn.fn, fn.size))
