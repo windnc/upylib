@@ -62,7 +62,7 @@ def dup(inspect_root, ref_root, summary_fn):
     fo_unmatch = open(summary_fn.replace(".txt", ".unmatch.txt"), "w")
     for dn, file_dict in inspect.items():
         for ref_dn, ref_file_dict in ref.items():
-            if file_dict["size"] == ref_file_dict["size"]:
+            if file_dict["size"] == ref_file_dict["size"] and file_dict["just_dn"] == ref_file_dict["just_dn"]:
                 print("match")
                 print("match", file=fo_match)
                 print((inspect_root + dn).rstrip("/"), len(file_dict["files"]), file_dict["size"], file=fo_match)
