@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+import random
+import sys
+import os
+import json
+from upylib.util import fs
+import shutil
+
+
+def load_param():
+    if len(sys.argv) == 1:
+        print(f"usage: {sys.argv[0]} root [report-fn]")
+        return False
+    elif len(sys.argv) == 2:
+        return sys.argv[1], "summary.txt"
+    elif len(sys.argv) == 3:
+        return sys.argv[1], sys.argv[2]
+    else:
+        print(f"usage: {sys.argv[0]} root [report-fn]")
+        return False
+    return True
+
+
+def dup_file(root, summary_fn):
+    file_list = [json.loads(line) for line in open(summary_fn)]
+    fo = open(summary_fn.replace(".txt", ".dup.txt"), "w")
+    fo_dup_pl = open(summary_fn.replace(".txt", ".dup.pvpl"), "w")
+
+    while True:
+        if not file_list:
+            break
+
+        #print(len(file_list))
+        size_0 = file_list[0]["size"]
+        size_0_str = file_list[0]["size_str"]
+        for i in range(1, len(file_list)):
+            if file_list[i]["size"] != size_0:
+                break
+
+        if i >= 2:
+            print(size_0, size_0_str, i, file=fo)
+            #print(size_0, size_0_str, i)
+            for fi in file_list[0:i]:
+                #md5 = fs.get_md5(fi["full_fn"])
+                print(fi["full_fn"], flush=True, file=fo)
+                #print(fi["full_fn"], flush=True)
+                #if fs.is_movie(fi["fn"]) or fs.is_image(fi["fn"]):
+                if fs.is_movie(fi["fn"]):
+                    print(fi["full_fn"][len(root)+1:], flush=True, file=fo_dup_pl)
+
+        file_list = file_list[i:]
+    fo.close()
+    fo_dup_pl.close()
+    return True
+
+
+def preproc(root):
+    file_list = fs.get_file_list(root=root, recursive=True)
+    for fi in file_list:
+        if fi.full_fn.endswith(".lmp4"):
+            new_fn = fi.full_fn.replace(".lmp4", ".mp4")
+            print(fi.full_fn)
+            print(new_fn)
+            shutil.move(fi.full_fn, new_fn)
+        elif fi.fn == "._.DS_Store" or fi.fn == ".DS_Store":
+            os.remove(fi.full_fn)
+            print(fi.full_fn)
+        elif fi.ext == "rmvb":
+            os.remove(fi.full_fn)
+            print(fi.full_fn)
+        elif fi.ext == "swp":
+            os.remove(fi.full_fn)
+            print(fi.full_fn)
+    #raise
+
+def dup(root, summary_fn):
+    fo = open(summary_fn, "w")
+    print("file scan ...", end=" ", flush=True)
+    file_list = fs.get_file_list(root=root, recursive=True)
+    file_list = sorted(file_list, key=lambda k:k.size, reverse=True)
+    print()
+
+    print("save ...", end=" ", flush=True)
+    for fi in file_list:
+        print(fi, file=fo)
+    print()
+    fo.close()
+
+    fo_shuf_pl = open(summary_fn.replace(".txt", ".shuf.pvpl"), "w")
+    random.shuffle(file_list)
+    for fi in file_list:
+        if fs.is_movie(fi.fn):
+            print(fi.full_fn[len(root)+1:], file=fo_shuf_pl)
+        """
+        if fs.is_image(fi.fn):
+            continue
+        if fs.is_music(fi.fn):
+            continue
+        if fs.is_doc(fi.fn):
+            continue
+        if fs.is_text(fi.fn):
+            continue
+        if fs.is_archive(fi.fn):
+            continue
+        if fs.is_bin(fi.fn):
+            continue
+        """
+    fo_shuf_pl.close()
+
+    dup_file(root, summary_fn)
+
+
+def large(root, summary_fn):
+    th = 1024 * 1024 * 1024
+    file_list = fs.get_file_list(root=root, recursive=True)
+    random.shuffle(file_list)
+
+    fo = open(summary_fn.replace(".txt", ".large.shuf.pvpl"), "w")
+    for fi in file_list:
+        if fs.is_movie(fi.fn) and fi.size > th:
+            print(fi.full_fn[len(root)+1:], file=fo)
+    fo.close()
+
+def attn(root, summary_fn):
+    file_list = fs.get_file_list(root=root, recursive=True)
+    random.shuffle(file_list)
+
+    fo = open(summary_fn.replace(".txt", ".attn.shuf.pvpl"), "w")
+    for fi in file_list:
+        if fs.is_movie(fi.fn):
+            if "주목" in fi.fn or "이쁨" in fi.fn:
+                print(fi.full_fn[len(root)+1:], file=fo)
+    fo.close()
+
+def run():
+    res = load_param()
+    if not res:
+        return False
+    root, summary_fn = res
+    preproc(root)
+    dup(root, summary_fn)
+    large(root, summary_fn)
+    attn(root, summary_fn)
+
+
+if __name__ == "__main__":
+    run()
