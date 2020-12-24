@@ -28,7 +28,7 @@ def is_movie(fn):
     ext = extract_ext(fn)
     if not ext:
         return False
-    if ext in ("mp4", "mkv", "wmv", "avi"):
+    if ext in ("mp4", "mkv", "wmv", "avi", "mts", "ts", "tp", "m2t", "mpg", "mpeg", "asf", "k3g", "swf", "3gp", "skm", "mov", "m4v", "flv", "pvpl"):
         return True
     else:
         return False
@@ -38,27 +38,52 @@ def is_image(fn):
     ext = extract_ext(fn)
     if not ext:
         return False
-    if ext in ("jpg", "png", "gif", "bmp"):
+    if ext in ("jpg", "jpeg", "png", "gif", "bmp"):
         return True
     else:
         return False
-
 
 def is_music(fn):
     ext = extract_ext(fn)
     if not ext:
         return False
-    if ext in ("mp3", "wav", "mid", "aac", "flac"):
+    if ext in ("mp3", "wav", "mid", "aac", "flac", "ogg", "gp4", "gp5"):
         return True
     else:
         return False
 
+def is_doc(fn):
+    ext = extract_ext(fn)
+    if not ext:
+        return False
+    if ext in ("pdf", "txt", "epub", "doc", "docx"):
+        return True
+    else:
+        return False
 
 def is_text(fn):
     ext = extract_ext(fn)
     if not ext:
         return False
-    if ext in ("txt", "md", "ini", "json", "c", "cpp", "php", "h", "py", "java"):
+    if ext in ("txt", "md", "ini", "nfo", "json", "c", "cpp", "log", "php", "h", "py", "java", "smi", "srt", "sub", "url", "sh", "cs", "website", "html", "js", "css", "kt", "mht", "htm"):
+        return True
+    else:
+        return False
+
+def is_bin(fn):
+    ext = extract_ext(fn)
+    if not ext:
+        return False
+    if ext in ("exe", "dll", "so", "a", "db", "db3", "db3-journal", "sqlite", "sqlite3", "sqlite3-journal", "idx", "cache", "torrent", "lnk", "tmp"):
+        return True
+    else:
+        return False
+
+def is_archive(fn):
+    ext = extract_ext(fn)
+    if not ext:
+        return False
+    if ext in ("zip", "rar", "7zip", "7z", "iso", "tar", "gz", "tgz"):
         return True
     else:
         return False
