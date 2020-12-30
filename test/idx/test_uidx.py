@@ -1,12 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-
 import json
 from upylib.idx.uidx import UIdx
-
-
-def test_uidx():
-    uidx = UIdx(conf_fn="test.json")
 
 
 def test_uidx_create():
@@ -29,6 +22,7 @@ def test_uidx_create():
         assert uidx.set_tag_str(id=f2["id"], tag="test_str", val="ok")
 
 
-if __name__ == "__main__":
-    test_uidx_create()
-    test_uidx()
+def test_uidx():
+    uidx = UIdx(conf_fn="test.json")
+
+

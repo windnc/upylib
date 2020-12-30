@@ -1,18 +1,14 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-⏎
-
-from __future__ import print_function
-
-from fs import *
+from upylib.util.fs import get_dir_list
 
 
-def test():
+def test_fs():
     root = "../"
     print(root)
     dinfo_list = get_dir_list(root)
     if dinfo_list:
         for i, dinfo in enumerate(dinfo_list):
-            print(dinfo.toJson())
+            # print(dinfo.toJson())
+            print(dinfo)
             if i >= 3:
                 break
     else:
@@ -23,7 +19,7 @@ def test():
     dinfo_list = get_dir_list(root, recursive=True)
     if dinfo_list:
         for i, dinfo in enumerate(dinfo_list):
-            print(dinfo.toJson())
+            print(dinfo)
             if i >= 10:
                 break
     else:
@@ -38,7 +34,3 @@ def test():
                 break
     else:
         print("fail")
-
-
-if __name__ == "__main__":
-    test()

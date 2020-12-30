@@ -2,7 +2,7 @@ import os
 
 from upylib.util.fs import NotExistsError
 from upylib.util.fs import get_file_list
-from upylib.util.image import save_thumb
+from upylib.media.image import save_thumb
 
 
 def test_1():

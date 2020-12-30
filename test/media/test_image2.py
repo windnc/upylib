@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-from image import save_thumb
+from upylib.media.image import save_thumb
 import logging
 
 

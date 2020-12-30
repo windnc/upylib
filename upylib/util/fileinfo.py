@@ -99,7 +99,7 @@ class DirInfo:
             self.dn = dn
 
         if not os.path.isdir(self.full_dn):
-            return
+            raise NotEx
 
         self.abs_dn = os.path.abspath(self.full_dn)
         self.cstamp = int(os.path.getctime(self.full_dn))

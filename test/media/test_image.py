@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-⏎
 import sys
-from image import *
+from upylib.media.image import *
 
 
 def test():

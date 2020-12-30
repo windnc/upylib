@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 
-from net import *
+from upylib.net.net import *
 
 
 def test():

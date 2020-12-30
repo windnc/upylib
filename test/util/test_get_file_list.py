@@ -1,19 +1,13 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-⏎
-
-from __future__ import print_function
-
-from fs import *
+from upylib.util.fs import get_file_list, NotExistsError
 
 
-def test():
+def test_get_file_list():
     print("test invlid")
     root = "a"
     print(root)
-    file_list = get_file_list(root)
-    if file_list:
-        print(file_list)
-    else:
+    try:
+        file_list = get_file_list(root)
+    except NotExistsError:
         print("fail")
 
     root = "../"
@@ -21,7 +15,7 @@ def test():
     finfo_list = get_file_list(root)
     if finfo_list:
         for i, finfo in enumerate(finfo_list):
-            print(finfo.toJson())
+            print(finfo)
             if i >= 3:
                 break
     else:
@@ -31,7 +25,7 @@ def test():
     finfo_list = get_file_list(root, recursive=True)
     if finfo_list:
         for i, finfo in enumerate(finfo_list):
-            print(finfo.toJson())
+            print(finfo)
             if i >= 3:
                 break
     else:
@@ -41,7 +35,7 @@ def test():
     finfo_list = get_file_list(root, recursive=True, ctx={"filter": {"ext": "py"}})
     if finfo_list:
         for i, finfo in enumerate(finfo_list):
-            print(finfo.toJson())
+            print(finfo)
             if i >= 3:
                 break
     else:
@@ -57,7 +51,3 @@ def test():
             #    break
     else:
         print("fail")
-
-
-if __name__ == "__main__":
-    test()
