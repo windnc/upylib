@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-⏎
-
 import datetime
 import time
 
@@ -37,6 +34,16 @@ def datedict2stamp(d):
 
     s = "%d %d %d %d %d %d" % (d["year"], d["month"], d["day"], hour, minute, second)
     return int(time.mktime(datetime.datetime.strptime(s, "%Y %m %d %H %M %S").timetuple()))
+
+
+def get_today_ymd():
+    ymd = datetime.date.today().strftime("%Y%m%d")
+    return ymd
+
+
+def get_yesterday_ymd():
+    ymd = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+    return ymd
 
 
 def stamp2datedict(stamp):
