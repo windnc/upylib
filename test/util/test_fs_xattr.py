@@ -21,8 +21,9 @@ def test_xattr():
     res = xattr_set(fn, "id", "3")
     res = xattr_set(fn, "언어", "한글")
     res = xattr_set(fn, "test", "aa bb c")
-    #print(res)
     assert res
+    res = xattr_get(fn, "언어")
+    print(res)
 
     print("test remove")
     res = xattr_remove(fn, "언어")
@@ -33,7 +34,7 @@ def test_xattr():
     res = xattr_key_list(fn)
     assert res
 
-    for  k in res:
+    for k in res:
         v = xattr_get(fn, k)
         print("%s: %s" %(k, v))
 

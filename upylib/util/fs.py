@@ -5,6 +5,7 @@ import os
 import shutil
 import xattr
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
