@@ -123,3 +123,16 @@ def test_get_filesize_str():
     assert get_filesize_str(4000000000) == "3.73 GB"
     assert get_filesize_str(5000000000000) == "4.55 TB"
     assert get_filesize_str(6000000000000000) == "5456.97 TB"
+
+
+def test_copy_file():
+    with open("test2.txt", "w") as fo:
+        print("asdafjlk", file=fo)
+    xattr_set("test2.txt", "hi", "hello")
+    xattr_set("test2.txt", "bye", 1)
+
+    assert copy_file("test2.txt", "/tmp/test.copy.txt")
+    assert os.path.isfile("/tmp/test.copy.txt")
+    assert del_file("/tmp/test.copy.txt")
+    assert not os.path.isfile("/tmp/test.copy.txt")
+

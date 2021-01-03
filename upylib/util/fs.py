@@ -44,6 +44,7 @@ def is_image(fn):
     else:
         return False
 
+
 def is_music(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -52,6 +53,7 @@ def is_music(fn):
         return True
     else:
         return False
+
 
 def is_doc(fn):
     ext = extract_ext(fn)
@@ -62,6 +64,7 @@ def is_doc(fn):
     else:
         return False
 
+
 def is_text(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -71,6 +74,7 @@ def is_text(fn):
     else:
         return False
 
+
 def is_bin(fn):
     ext = extract_ext(fn)
     if not ext:
@@ -79,6 +83,7 @@ def is_bin(fn):
         return True
     else:
         return False
+
 
 def is_archive(fn):
     ext = extract_ext(fn)
@@ -154,6 +159,12 @@ def xattr_key_list(fn):
         return list()
 
     return r
+
+
+def copy_xattr(src, tgt):
+    for k in xattr_key_list(src):
+        v = xattr_get(src, k)
+        xattr_set(tgt, k, v)
 
 
 def _check_filter(finfo, filter_dict):
@@ -325,18 +336,6 @@ def del_empty_dir(root):
     return True
 
 
-def del_file(fn):
-    logging.debug("del file %s" % fn)
-
-    try:
-        os.remove(fn)
-    except Exception as e:
-        logging.info("del file exception: %s" % e)
-        return False
-
-    return True
-
-
 def assert_no_file(fn):
     logging.debug("assert no file %s" % fn)
 
@@ -348,6 +347,20 @@ def assert_no_file(fn):
     return True
 
 
+def copy_file(src, tgt):
+    logging.debug("copy file: %s -> %s" % (src, tgt))
+
+    try:
+        shutil.copy(src, tgt)
+    except Exception as e:
+        logging.info("copy file error: %s" % e)
+        return False
+
+    copy_time(src, tgt)
+    copy_xattr(src, tgt)
+    return True
+
+
 def move_file(src, tgt):
     logging.debug("move file: %s -> %s" % (src, tgt))
 
@@ -355,6 +368,18 @@ def move_file(src, tgt):
         shutil.move(src, tgt)
     except Exception as e:
         logging.info("move file error: %s" % e)
+        return False
+
+    return True
+
+
+def del_file(fn):
+    logging.debug("del file %s" % fn)
+
+    try:
+        os.remove(fn)
+    except Exception as e:
+        logging.info("del file exception: %s" % e)
         return False
 
     return True
